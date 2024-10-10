@@ -2,8 +2,6 @@
 //  TaskSchedulerApp.swift
 //  TaskScheduler
 //
-//  Created by Vanessa Huynh on 10/3/24.
-//
 
 import SwiftUI
 
