@@ -59,6 +59,11 @@ struct NewScheduleView: View {
                             .labelsHidden()
                             .colorScheme(.dark)
                             .scaleEffect(x: geo.size.width / datepickersize.width, y: geo.size.width / datepickersize.width, anchor: .topLeading)
+                            .onChange(of: fromTime) {
+                                if fromTime > toTime {
+                                    toTime = fromTime
+                                }
+                            }
                     }
                 }
                 
@@ -69,10 +74,15 @@ struct NewScheduleView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.leading)
                     GeometryReader { geo in
-                        DatePicker("", selection: $fromTime, displayedComponents: .hourAndMinute)
+                        DatePicker("", selection: $toTime, displayedComponents: .hourAndMinute)
                             .labelsHidden()
                             .colorScheme(.dark)
                             .scaleEffect(x: geo.size.width / datepickersize.width, y: geo.size.width / datepickersize.width, anchor: .topLeading)
+                            .onChange(of: toTime) {
+                                if toTime < fromTime {
+                                    fromTime = toTime
+                                }
+                            }
                     }
                 }
             }
@@ -93,6 +103,7 @@ struct NewScheduleView: View {
                     HStack{
                         TextField("", text: $tasks[index])
                             .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .frame(height: 40)
                         
                         Button(action: {
                             
@@ -107,20 +118,24 @@ struct NewScheduleView: View {
                     .padding(5)
                 }
                 
-                
-                Button(action: {
-                    tasks.append("")
-                }) {
-                    Image(systemName: "plus")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 30, height: 30)
-                        .foregroundColor(.white)
+                HStack{
+                    Button(action: {
+                        tasks.append("")
+                    }) {
+                        Image(systemName: "plus")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity, minHeight: 40)
+                            .background(Color(red: 68/255, green: 115/255, blue: 207/255))
+                            .cornerRadius(10)
+                    }
+                    .padding(.top)
+                    
+                    Spacer()
+                        .frame(width: 40)
                 }
-                .frame(width: 250, height: 50)
-                .background(Color(red: 68/255, green: 115/255, blue: 207/255))
-                .cornerRadius(10)
-                .padding(.top)
                 
             }
             .padding(30)
