@@ -14,4 +14,5 @@ struct Task {
     var breaksEvery: Int // minutes
     var breakDuration: Int // minutes
     var description: String
+    var startTime: Date
 }
