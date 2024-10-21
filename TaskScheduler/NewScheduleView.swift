@@ -11,6 +11,9 @@ struct NewScheduleView: View {
     @State private var toTime = Date()
     @State private var tasks: [String] = [""]
     
+    @State private var showAlert: Bool = false
+    @State private var alertMessage: String = ""
+    
     @State var datepickersize: CGSize = .zero
     
     var body: some View {
@@ -28,7 +31,9 @@ struct NewScheduleView: View {
             }
             Spacer()
             Button(action: {
-                
+                if validateForm(){
+                    
+                }
             }){
                 Image(systemName: "checkmark.circle.fill")
                     .resizable()
@@ -37,7 +42,9 @@ struct NewScheduleView: View {
             }
         }   //BUTTONS END
         .padding(20)
-        
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text("Invalid Task"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+        }
         
         Text("New Schedule")
             .font(.largeTitle)
@@ -161,6 +168,21 @@ struct NewScheduleView: View {
             .opacity(0)
             
         Spacer()
+    }
+    
+    private func validateForm() -> Bool{
+        for(index, task) in tasks.enumerated(){
+            if task.isEmpty{
+                alertMessage = "Mandatory Information for task \(index + 1) is not present"
+                showAlert = true
+                return false
+            } else {
+                alertMessage = "Mandatory Information for task \"\(task)\" is not present"
+                showAlert = true
+                return false
+            }
+        }
+        return true
     }
 }
 
