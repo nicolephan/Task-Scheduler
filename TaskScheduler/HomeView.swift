@@ -12,9 +12,12 @@ struct HomeView: View {
     @State private var scheduleExists: Bool = false
     @State private var navigateToViewSchedule: Bool = false
     @State private var navigateToNewTask: Bool = false
+    @State private var redMarkerOffset: CGFloat = -695 // 12 AM offset is y = -695
+    @State private var redMarkerPosition: CGFloat = 0
     
     let hours = Array(0...23)
     let heightPerHour = 60
+    let lineHeight = 2 // Height of calendar lines
     
     var body: some View {
         NavigationStack {
@@ -41,8 +44,8 @@ struct HomeView: View {
                                             .opacity(0.7)
                                         
                                         Rectangle() // Calendar lines
-                                            .background(.text)
-                                            .frame(height: 2)
+                                            .fill(.text)
+                                            .frame(height: CGFloat(lineHeight))
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                             .opacity(0.1)
                                     }
@@ -58,8 +61,8 @@ struct HomeView: View {
                                     .padding()
                                 RoundedRectangle(cornerRadius: 16)
                                     .fill(.blue)
-                                    .frame(height: CGFloat(heightPerHour)) // height will change
-                                    .offset(x: -10, y: 0) // y will change
+                                    .frame(height: CGFloat(heightPerHour) + 4) // height will change
+                                    .offset(x: -10, y: 0) // y will change. y = -660 for 12 AM, y = 720 for 11 PM
                             }
                             
                             HStack(spacing: 0) { // Red marker
@@ -73,12 +76,16 @@ struct HomeView: View {
                                     .frame(width: 300, height: 2)
                             }
                             .padding()
-                            .offset(y: CGFloat(0)) // TODO: Fix
+                            .offset(y: CGFloat(calculatePosition() + redMarkerOffset))
                         }
                     }
                     .onAppear {
                         // Scroll to 7 AM (which is hour 7) when the view first appears
                         scrollProxy.scrollTo(7, anchor: .top)
+                        
+                        Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
+                            redMarkerPosition = calculatePosition() + redMarkerOffset
+                        }
                     }
                 }
                 .padding(.leading, -5)
@@ -145,8 +152,9 @@ struct HomeView: View {
         let hour = components.hour ?? 0
         let minute = components.minute ?? 0
 
-//        print(CGFloat(hour * heightPerHour + minute))
-        return CGFloat(hour * heightPerHour + minute)
+        let totalMinutes = (hour * 60) + minute
+    
+        return CGFloat(totalMinutes)
     }
 }
     
