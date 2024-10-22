@@ -7,6 +7,8 @@ import SwiftUI
 
 struct NewScheduleView: View {
     
+    @Environment(\.dismiss) var dismiss
+    
     @State private var fromTime = Date()
     @State private var toTime = Date()
     @State private var tasks: [String] = [""]
@@ -15,6 +17,7 @@ struct NewScheduleView: View {
     @State private var alertMessage: String = ""
     
     @State var datepickersize: CGSize = .zero
+    @Binding var scheduleExists: Bool
     
     var body: some View {
         HStack{     //BUTTONS
@@ -31,8 +34,9 @@ struct NewScheduleView: View {
             }
             Spacer()
             Button(action: {
-                if validateForm(){
-                    
+                if validateForm() {
+                    scheduleExists = true
+                    dismiss()
                 }
             }){
                 Image(systemName: "checkmark.circle.fill")
@@ -187,5 +191,5 @@ struct NewScheduleView: View {
 }
 
 #Preview {
-    NewScheduleView()
+    NewScheduleView(scheduleExists: .constant(false))
 }
