@@ -7,19 +7,13 @@ import SwiftUI
 
 struct NewTaskView: View {
     
-    @State private var tasks: [Task] = []
-    
-    @State private var newTask = Task(
-            title: "",
-            exactStart: false,
-            taskDuration: 0,
-            priority: "Low",
-            addBreaks: false,
-            breaksEvery: 0,
-            breakDuration: 0,
-            description: "",
-            startTime: Date()
-        )
+    @Binding var task: Task
+    @State private var localTask: Task
+        
+    init(task: Binding<Task>) {
+        self._task = task
+        self._localTask = State(initialValue: task.wrappedValue)
+    }
     
     @State private var taskHours: String = ""
     @State private var taskMins: String = ""
@@ -60,33 +54,38 @@ struct NewTaskView: View {
             .padding(20)
             Spacer().frame(maxHeight: 15)
             
-            TaskForm(task: $newTask, isEditable: true, taskHours: $taskHours, taskMins: $taskMins, breakDurationHours: $breakDurationHours, breakDurationMins: $breakDurationMins, breakFrequencyHours: $breakFrequencyHours, breakFrequencyMins: $breakFrequencyMins)
+            TaskForm(task: $localTask, isEditable: true, taskHours: $taskHours, taskMins: $taskMins, breakDurationHours: $breakDurationHours, breakDurationMins: $breakDurationMins, breakFrequencyHours: $breakFrequencyHours, breakFrequencyMins: $breakFrequencyMins)
         }
+        .navigationBarBackButtonHidden(true)
     }
     
     private func saveTask(){
-        let taskDuration = (Int(taskHours) ?? 0) * 60 + (Int(taskMins) ?? 0)
-        
-        if newTask.addBreaks{
-            newTask.breakDuration = (Int(breakDurationHours) ?? 0) * 60 + (Int(breakDurationMins) ?? 0)
-            newTask.breaksEvery = (Int(breakFrequencyHours) ?? 0) * 60 + (Int(breakFrequencyMins) ?? 0)
+        task.title = localTask.title
+                task.exactStart = localTask.exactStart
+                task.startTime = localTask.startTime
+        task.taskDuration = (Int(taskHours) ?? 0) * 60 + (Int(taskMins) ?? 0)
+        if task.addBreaks{
+            task.breakDuration = (Int(breakDurationHours) ?? 0) * 60 + (Int(breakDurationMins) ?? 0)
+            task.breaksEvery = (Int(breakFrequencyHours) ?? 0) * 60 + (Int(breakFrequencyMins) ?? 0)
         }
+        task.priority = localTask.priority
+                task.addBreaks = localTask.addBreaks
+                task.description = localTask.description
         
-        let newTaskEntry = Task(
-            title: newTask.title,
-            exactStart: newTask.exactStart,
-            taskDuration: taskDuration,
-            priority: newTask.priority,
-            addBreaks: newTask.addBreaks,
-            breaksEvery: newTask.breaksEvery,
-            breakDuration: newTask.breakDuration,
-            description: newTask.description,
-            startTime: newTask.startTime
-        )
-        tasks.append(newTaskEntry)
+        dismiss()
     }
 }
 
 #Preview {
-    NewTaskView()
+    NewTaskView(task: .constant(Task(
+        title: "Sample Task",
+        exactStart: false,
+        taskDuration: 0,
+        priority: "Low",
+        addBreaks: false,
+        breaksEvery: 0,
+        breakDuration: 0,
+        description: "",
+        startTime: Date()
+    )))
 }
