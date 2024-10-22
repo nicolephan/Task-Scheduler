@@ -7,92 +7,124 @@ import SwiftUI
 
 struct HomeView: View {
     
+    @State private var showingOptions: Bool = false
+    @State private var navigateToNewSchedule: Bool = false
+    @State private var scheduleExists: Bool = false
+    @State private var navigateToViewSchedule: Bool = false
+    @State private var navigateToNewTask: Bool = false
+    
     let hours = Array(0...23)
     let heightPerHour = 60
     
     var body: some View {
-        ZStack {
-            ScrollViewReader { scrollProxy in
-                HStack { // Title
-                    Text("Sept 26, 2024") // TODO: Fix date
-                        .font(.title)
-                        .padding(25)
-                        .bold()
-                    Spacer()
-                }
-                
-                ScrollView { // Calendar
-                    ZStack {
-                        VStack(spacing: 0) {
-                            ForEach(hours, id: \.self) { hour in
-                                HStack() {
-                                    Spacer()
-                                    
-                                    Text("\(formattedHour(hour))") // Time labels on the left
-                                        .frame(width: 60, alignment: .leading)
-                                        .foregroundColor(.text)
-                                        .opacity(0.7)
-                                    
-                                    Rectangle() // Calendar lines
-                                        .background(.text)
-                                        .frame(height: 2)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .opacity(0.1)
+        NavigationStack {
+            ZStack {
+                ScrollViewReader { scrollProxy in
+                    HStack { // Title
+                        Text("Sept 26, 2024") // TODO: Fix date
+                            .font(.title)
+                            .padding(25)
+                            .bold()
+                        Spacer()
+                    }
+                    
+                    ScrollView { // Calendar
+                        ZStack {
+                            VStack(spacing: 0) {
+                                ForEach(hours, id: \.self) { hour in
+                                    HStack() {
+                                        Spacer()
+                                        
+                                        Text("\(formattedHour(hour))") // Time labels on the left
+                                            .frame(width: 60, alignment: .leading)
+                                            .foregroundColor(.text)
+                                            .opacity(0.7)
+                                        
+                                        Rectangle() // Calendar lines
+                                            .background(.text)
+                                            .frame(height: 2)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .opacity(0.1)
+                                    }
+                                    .padding(.vertical, 20)
                                 }
-                                .padding(.vertical, 20)
+                            }
+                            .padding()
+                            
+                            
+                            HStack { // TODO: Example task block
+                                Spacer()
+                                    .frame(width: 60)
+                                    .padding()
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(.blue)
+                                    .frame(height: CGFloat(heightPerHour)) // height will change
+                                    .offset(x: -10, y: 0) // y will change
+                            }
+                            
+                            HStack(spacing: 0) { // Red marker
+                                Spacer()
+                                Circle()
+                                    .fill(.redAccent)
+                                    .frame(width: 14)
+                                
+                                Rectangle()
+                                    .fill(.redAccent)
+                                    .frame(width: 300, height: 2)
+                            }
+                            .padding()
+                            .offset(y: CGFloat(0)) // TODO: Fix
+                        }
+                    }
+                    .onAppear {
+                        // Scroll to 7 AM (which is hour 7) when the view first appears
+                        scrollProxy.scrollTo(7, anchor: .top)
+                    }
+                }
+                .padding(.leading, -5)
+                
+                VStack { // Plus button
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            if scheduleExists {
+                                navigateToNewSchedule = false
+                                showingOptions = true
+                            } else {
+                                navigateToNewSchedule = true
+                            }
+                        }) {
+                            Image("plusCircle")
+                                .resizable()
+                                .frame(maxWidth: 64, maxHeight: 64)
+                                .aspectRatio(contentMode: .fill)
+                                .foregroundStyle(Color("blueAccent"))
+                                .shadow(radius: CGFloat(4))
+                        }
+                        .navigationDestination(isPresented: $navigateToNewSchedule) {
+                            NewScheduleView(scheduleExists: $scheduleExists)
+                        }
+                        .confirmationDialog("Select Choice", isPresented: $showingOptions, titleVisibility: .visible) {
+                            
+                            Button("View Schedule") {
+                                navigateToViewSchedule = true
+                            }
+                            .navigationDestination(isPresented: $navigateToViewSchedule) {
+                                // ViewScheduleView() TODO: Uncomment once implemented
+                            }
+                            
+                            Button("New Task") {
+                                navigateToNewTask = true
+                            }
+                            .navigationDestination(isPresented: $navigateToNewTask) {
+                                 NewTaskView()
                             }
                         }
-                        .padding()
-                        
-                        
-                        HStack { // TODO: Example task block
-                            Spacer()
-                                .frame(width: 60)
-                                .padding()
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(.blue)
-                                .frame(width: .infinity, height: CGFloat(heightPerHour)) // height will change
-                                .offset(x: -10, y: 0) // y will change
-                        }
-                        
-                        HStack(spacing: 0) { // Red marker
-                            Spacer()
-                            Circle()
-                                .fill(.redAccent)
-                                .frame(width: 14)
-                            
-                            Rectangle()
-                                .fill(.redAccent)
-                                .frame(width: 300, height: 2)
-                        }
-                        .padding()
-                        .offset(y: CGFloat(0)) // TODO: Fix
                     }
+                    .padding(.bottom, 70)
+                    .padding(.trailing, 30)
                 }
-                .onAppear {
-                    // Scroll to 7 AM (which is hour 7) when the view first appears
-                    scrollProxy.scrollTo(7, anchor: .top)
-                }
-            }
-            .padding(.leading, -5)
-            
-            VStack { // Plus button
-                Spacer()
-                HStack {
-                    Spacer()
-                    Button(action: {
-
-                    }) {
-                        Image("plusCircle")
-                            .resizable()
-                            .frame(maxWidth: 64, maxHeight: 64)
-                            .aspectRatio(contentMode: .fill)
-                            .foregroundStyle(Color("blueAccent"))
-                            .shadow(radius: CGFloat(4))
-                    }
-                }
-                .padding(.bottom, 70)
-                .padding(.trailing, 30)
             }
         }
     } // view ends
