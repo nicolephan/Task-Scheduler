@@ -35,9 +35,10 @@ struct HomeView: View {
                 ScrollViewReader { scrollProxy in
                     HStack { // Title
                         Text("Sept 26, 2024") // TODO: Fix date
-                            .font(.title)
+                            .font(.custom("Manrope-ExtraBold", size: 32))
+                            .foregroundStyle(.text)
                             .padding(25)
-                            .bold()
+
                         Spacer()
                     }
                     
@@ -50,6 +51,7 @@ struct HomeView: View {
                                         
                                         Text("\(formattedHour(hour))") // Time labels on the left
                                             .frame(width: 60, alignment: .leading)
+                                            .font(.custom("Manrope-ExtraBold", size: 18))
                                             .foregroundColor(.text)
                                             .opacity(0.7)
                                         
@@ -59,7 +61,7 @@ struct HomeView: View {
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                             .opacity(0.1)
                                     }
-                                    .padding(.vertical, 20)
+                                    .padding(.vertical, 18)
                                 }
                             }
                             .padding()
@@ -86,7 +88,7 @@ struct HomeView: View {
                                     .frame(width: 300, height: 2)
                             }
                             .padding()
-                            .offset(y: CGFloat(0)) // TODO: Fix
+                            .offset(y: CGFloat(0))
                         }
                     }
                     .onAppear {

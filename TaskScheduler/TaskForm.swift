@@ -21,9 +21,12 @@ struct TaskForm: View {
     var body: some View {
         VStack{
             TextField("Title", text: $task.title)
-                .font(.system(size: 25))
-                .padding()
+                .font(.custom("Manrope-ExtraBold", size: 24))
+                .foregroundStyle(.text)
+                .padding(.horizontal)
                 .disabled(!isEditable)
+            
+                // TODO: Add lighter text for placeholder
             
             Divider()
                 .padding([.leading, .trailing])
@@ -31,9 +34,17 @@ struct TaskForm: View {
             Text("Time")
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding([.leading, .top])
+                .font(.custom("Manrope-ExtraBold", size: 18))
+                .foregroundStyle(.text)
+            
             VStack{
                 HStack{
                     Text("Set Exact Start Time")
+                        .font(.custom("Manrope-Bold", size: 18))
+                        .foregroundStyle(.text)
+                        .frame(width: 200, alignment: .leading)
+                        .padding(.leading, 5)
+                    
                     Toggle("", isOn: $task.exactStart)
                         .disabled(!isEditable)
                 }
@@ -44,17 +55,29 @@ struct TaskForm: View {
                         Text("Start Time")
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding([.leading])
+                            .font(.custom("Manrope-Bold", size: 18))
+                            .foregroundStyle(.text)
+                            .padding(.leading, 5)
+                            .padding(.top, -10)
                         DatePicker("", selection: $task.startTime, displayedComponents: .hourAndMinute)
                             .labelsHidden()
                             .padding(.trailing)
                             .disabled(!isEditable)
+//                            .blendMode(.multiply) // TODO: Find the right blend mode to hide BG
                     }
                 }
                 
                 HStack(spacing: 1){
-                    Text("Duration")
-                    Text("*")
-                        .foregroundColor(.red)
+                    HStack {
+                        Text("Duration")
+                            .font(.custom("Manrope-Bold", size: 18))
+                            .foregroundStyle(.text)
+                        Text("*")
+                            .font(.custom("Manrope-Bold", size: 18))
+                            .foregroundColor(.redAccent)
+                    }
+                    .padding(.leading, 5)
+                    
                     Spacer()
                     TextField("xx", text: $taskHours)
                         .keyboardType(.numberPad)
@@ -64,7 +87,12 @@ struct TaskForm: View {
                             taskHours = taskHours.filter { "0123456789".contains($0) }
                         }
                         .disabled(!isEditable)
+                        .font(.custom("Manrope-ExtraBold", size: 18))
+                        .foregroundStyle(.blueAccent)
                     Text("h")
+                        .font(.custom("Manrope-ExtraBold", size: 18))
+                        .foregroundStyle(.blueAccent)
+                    
                     
                     TextField("xx", text: $taskMins)
                         .keyboardType(.numberPad)
@@ -74,7 +102,11 @@ struct TaskForm: View {
                             taskMins = taskMins.filter { "0123456789".contains($0) }
                         }
                         .disabled(!isEditable)
+                        .font(.custom("Manrope-ExtraBold", size: 18))
+                        .foregroundStyle(.blueAccent)
                     Text("m")
+                        .font(.custom("Manrope-ExtraBold", size: 18))
+                        .foregroundStyle(.blueAccent)
                 }
                 .padding([.bottom, .leading, .trailing])
                 
@@ -86,55 +118,83 @@ struct TaskForm: View {
             if task.exactStart == false { //PRIORITY
                 Text("Priority")
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
+                    .padding([.horizontal, .top])
+                    .font(.custom("Manrope-ExtraBold", size: 18))
+                    .foregroundStyle(.text)
                 
-                HStack{
+                HStack {
                     Button(action: {
                         task.priority = "Low"
                     }){
                         Text("Low")
+                            .frame(width: 60, height: 16)
                             .padding()
-                            .foregroundColor(task.priority == "Low" ? Color.white : Color.black)
-                            .background(task.priority == "Low" ? Color.blue : Color.gray.opacity(0.5))
+                            .foregroundColor(task.priority == "Low" ? Color.white : .text)
+                            .background(task.priority == "Low" ? .blueAccent : .card)
                             .cornerRadius(15)
+                            .font(.custom("Manrope-Bold", size: 18))
+                        
                     }
+                    
                     Button(action: {
                         task.priority = "Medium"
                     }){
                         Text("Medium")
+                            .frame(width: 80, height: 16)
                             .padding()
-                            .foregroundColor(task.priority == "Medium" ? Color.white : Color.black)
-                            .background(task.priority == "Medium" ? Color.yellow : Color.gray.opacity(0.5))
+                            .foregroundColor(task.priority == "Medium" ? Color.white : .text)
+                            .background(task.priority == "Medium" ? .orangeAccent : .card)
                             .cornerRadius(15)
+                            .font(.custom("Manrope-Bold", size: 18))
                     }
+                    
                     Button(action: {
                         task.priority = "High"
                     }){
                         Text("High")
+                            .frame(width: 60, height: 16)
                             .padding()
-                            .foregroundColor(task.priority == "High" ? Color.white : Color.black)
-                            .background(task.priority == "High" ? Color.red : Color.gray.opacity(0.5))
+                            .foregroundColor(task.priority == "High" ? Color.white : .text)
+                            .background(task.priority == "High" ? .redAccent : .card)
                             .cornerRadius(15)
+                            .font(.custom("Manrope-Bold", size: 18))
                     }
+                    
+                    Spacer()
                 }
+                .padding(.horizontal)
                 .disabled(!isEditable)
             }
             
             Text("Breaks")
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding([.top, .leading, .trailing])
+                .font(.custom("Manrope-ExtraBold", size: 18))
+                .foregroundStyle(.text)
+            
             VStack{
                 HStack{
                     Text("Breaks")
+                        .font(.custom("Manrope-Bold", size: 18))
+                        .foregroundStyle(.text)
+                        .padding(.leading, 5)
                     Toggle("", isOn: $task.addBreaks)
                         .disabled(!isEditable)
                 }
                 
                 if task.addBreaks{
                     HStack {
-                        Text("Breaks Every")
-                        Text("*")
-                            .foregroundColor(.red)
+                        HStack {
+                            Text("Breaks Every")
+                                .font(.custom("Manrope-Bold", size: 18))
+                                .foregroundStyle(.text)
+                                
+                            Text("*")
+                                .font(.custom("Manrope-Bold", size: 18))
+                                .foregroundColor(.redAccent)
+                        }
+                        .frame(width: 130, alignment: .leading)
+                        .padding(.leading, 5)
                         Spacer()
                         TextField("xx", text: $breakFrequencyHours)
                             .keyboardType(.numberPad)
@@ -144,7 +204,11 @@ struct TaskForm: View {
                                 breakFrequencyHours = breakFrequencyHours.filter { "0123456789".contains($0) }
                             }
                             .disabled(!isEditable)
+                            .font(.custom("Manrope-ExtraBold", size: 18))
+                            .foregroundStyle(.blueAccent)
                         Text("h")
+                            .font(.custom("Manrope-ExtraBold", size: 18))
+                            .foregroundStyle(.blueAccent)
                         
                         TextField("xx", text: $breakFrequencyMins)
                             .keyboardType(.numberPad)
@@ -154,12 +218,23 @@ struct TaskForm: View {
                                 breakFrequencyMins = breakFrequencyMins.filter { "0123456789".contains($0) }
                             }
                             .disabled(!isEditable)
+                            .font(.custom("Manrope-ExtraBold", size: 18))
+                            .foregroundStyle(.blueAccent)
                         Text("m")
+                            .font(.custom("Manrope-ExtraBold", size: 18))
+                            .foregroundStyle(.blueAccent)
                     }
-                    HStack(spacing: 1) {
-                        Text("Duration")
-                        Text("*")
-                            .foregroundColor(.red)
+                    HStack() {
+                        HStack {
+                            Text("Duration")
+                                .font(.custom("Manrope-Bold", size: 18))
+                                .foregroundStyle(.text)
+                            Text("*")
+                                .font(.custom("Manrope-Bold", size: 18))
+                                .foregroundColor(.redAccent)
+                        }
+                        .padding(.leading, 5)
+                        
                         Spacer()
                         TextField("xx", text: $breakDurationHours)
                             .keyboardType(.numberPad)
@@ -169,7 +244,11 @@ struct TaskForm: View {
                                 breakDurationHours = breakDurationHours.filter { "0123456789".contains($0) }
                             }
                             .disabled(!isEditable)
+                            .font(.custom("Manrope-ExtraBold", size: 18))
+                            .foregroundStyle(.blueAccent)
                         Text("h")
+                            .font(.custom("Manrope-ExtraBold", size: 18))
+                            .foregroundStyle(.blueAccent)
                         
                         TextField("xx", text: $breakDurationMins)
                             .keyboardType(.numberPad)
@@ -179,7 +258,11 @@ struct TaskForm: View {
                                 breakDurationMins = breakDurationMins.filter { "0123456789".contains($0) }
                             }
                             .disabled(!isEditable)
+                            .font(.custom("Manrope-ExtraBold", size: 18))
+                            .foregroundStyle(.blueAccent)
                         Text("m")
+                            .font(.custom("Manrope-ExtraBold", size: 18))
+                            .foregroundStyle(.blueAccent)
                     }
                     
                 }
@@ -192,12 +275,17 @@ struct TaskForm: View {
             Text("Description")
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding([.top, .leading, .trailing])
+                .font(.custom("Manrope-Bold", size: 18))
+                .foregroundStyle(.text)
             TextEditor(text: $task.description)
                 .padding()
-                .background(Color(red:240/255, green:244/255, blue:246/255))
+                .scrollContentBackground(.hidden)
+                .background(.card)
                 .cornerRadius(20)
                 .frame(minHeight: 100)
                 .padding([.trailing, .leading])
+                .font(.custom("Manrope-Medium", size: 16))
+                .foregroundStyle(.text)
                 .disabled(!isEditable)
             Spacer()
         }
