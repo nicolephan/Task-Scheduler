@@ -13,6 +13,18 @@ struct HomeView: View {
     @State private var navigateToViewSchedule: Bool = false
     @State private var navigateToNewTask: Bool = false
     
+    @State private var task = Task(
+        title: "",
+        exactStart: false,
+        taskDuration: 0,
+        priority: "Low",
+        addBreaks: false,
+        breaksEvery: 0,
+        breakDuration: 0,
+        description: "",
+        startTime: Date()
+    )
+    
     let hours = Array(0...23)
     let heightPerHour = 60
     
@@ -118,7 +130,7 @@ struct HomeView: View {
                                 navigateToNewTask = true
                             }
                             .navigationDestination(isPresented: $navigateToNewTask) {
-                                 NewTaskView()
+                                NewTaskView(task: $task)
                             }
                         }
                     }
