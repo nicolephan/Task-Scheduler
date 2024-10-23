@@ -13,6 +13,7 @@ struct HomeView: View {
     @State private var navigateToViewSchedule: Bool = false
     @State private var navigateToNewTask: Bool = false
     
+    @State private var currentSchedule: Schedule?
     @State private var task = Task(
         title: "",
         exactStart: false,
@@ -115,7 +116,9 @@ struct HomeView: View {
                                 .shadow(radius: CGFloat(4))
                         }
                         .navigationDestination(isPresented: $navigateToNewSchedule) {
-                            NewScheduleView(scheduleExists: $scheduleExists)
+                            NewScheduleView(schedule: currentSchedule ?? Schedule(startTime: Date(), endTime: Date(), Tasks: []), scheduleExists: $scheduleExists) { newSchedule in
+                                currentSchedule = newSchedule
+                            }
                         }
                         .confirmationDialog("Select Choice", isPresented: $showingOptions, titleVisibility: .visible) {
                             

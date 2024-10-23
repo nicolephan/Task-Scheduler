@@ -9,15 +9,32 @@ struct NewScheduleView: View {
     
     @Environment(\.dismiss) var dismiss
     
-    @State private var fromTime = Date()
-    @State private var toTime = Date()
-    @State private var tasks: [Task] = [Task(title: "", exactStart: false, taskDuration: 0, priority: "Low", addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "", startTime: Date())]
-    
+    @State private var localSchedule: Schedule
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
     
     @State var datepickersize: CGSize = .zero
     @Binding var scheduleExists: Bool
+    var onSave: (Schedule) -> Void
+    
+    init(schedule: Schedule, scheduleExists: Binding<Bool>, onSave: @escaping (Schedule) -> Void) {
+        var modifiedSchedule = schedule
+        let emptyTask = Task(
+            title: "",
+            exactStart: false,
+            taskDuration: 0,
+            priority: "Low",
+            addBreaks: false,
+            breaksEvery: 0,
+            breakDuration: 0,
+            description: "",
+            startTime: Date()
+        )
+        modifiedSchedule.Tasks.append(emptyTask)
+        self._localSchedule = State(initialValue: modifiedSchedule)
+        self.onSave = onSave
+        self._scheduleExists = scheduleExists
+    }
     
     var body: some View {
         NavigationView{
@@ -38,6 +55,7 @@ struct NewScheduleView: View {
                     Button(action: {
                         if validateForm() {
                             scheduleExists = true
+                            onSave(localSchedule)
                             dismiss()
                         }
                     }){
@@ -68,13 +86,13 @@ struct NewScheduleView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.leading)
                             GeometryReader { geo in
-                                DatePicker("", selection: $fromTime, displayedComponents: .hourAndMinute)
+                                DatePicker("", selection: $localSchedule.startTime, displayedComponents: .hourAndMinute)
                                     .labelsHidden()
                                     .colorScheme(.dark)
                                     .scaleEffect(x: geo.size.width / datepickersize.width, y: geo.size.width / datepickersize.width, anchor: .topLeading)
-                                    .onChange(of: fromTime) {
-                                        if fromTime > toTime {
-                                            toTime = fromTime
+                                    .onChange(of: localSchedule.startTime) {
+                                        if localSchedule.startTime > localSchedule.endTime {
+                                            localSchedule.endTime = localSchedule.startTime
                                         }
                                     }
                             }
@@ -87,13 +105,13 @@ struct NewScheduleView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.leading)
                             GeometryReader { geo in
-                                DatePicker("", selection: $toTime, displayedComponents: .hourAndMinute)
+                                DatePicker("", selection: $localSchedule.endTime, displayedComponents: .hourAndMinute)
                                     .labelsHidden()
                                     .colorScheme(.dark)
                                     .scaleEffect(x: geo.size.width / datepickersize.width, y: geo.size.width / datepickersize.width, anchor: .topLeading)
-                                    .onChange(of: toTime) {
-                                        if toTime < fromTime {
-                                            fromTime = toTime
+                                    .onChange(of: localSchedule.endTime) {
+                                        if localSchedule.endTime < localSchedule.startTime {
+                                            localSchedule.startTime = localSchedule.endTime
                                         }
                                     }
                             }
@@ -112,13 +130,13 @@ struct NewScheduleView: View {
                         .padding()
                     VStack{
                         
-                        ForEach(tasks.indices, id:\.self){index in
+                        ForEach(localSchedule.Tasks.indices, id:\.self){index in
                             HStack{
-                                TextField("", text: $tasks[index].title)
+                                TextField("", text: $localSchedule.Tasks[index].title)
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
                                     .frame(height: 40)
                                 
-                                NavigationLink(destination: NewTaskView(task: $tasks[index])) {
+                                NavigationLink(destination: NewTaskView(task: $localSchedule.Tasks[index])) {
                                     Image(systemName: "pencil")
                                         .resizable()
                                         .frame(width: 20, height: 20)
@@ -133,7 +151,7 @@ struct NewScheduleView: View {
                             Button(action: {
                                 let newTask = Task(title: "", exactStart: false, taskDuration: 0, priority: "Low", addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "", startTime: Date())
 
-                                tasks.append(newTask)
+                                localSchedule.Tasks.append(newTask)
                             }) {
                                 Image(systemName: "plus")
                                     .resizable()
@@ -159,7 +177,7 @@ struct NewScheduleView: View {
                 .padding()
                 
                 // INVISIBLE DATEPICKER FOR RESIZE
-                DatePicker("", selection: $fromTime, displayedComponents: .hourAndMinute)
+                DatePicker("", selection: $localSchedule.startTime, displayedComponents: .hourAndMinute)
                     .background(
                         GeometryReader { geo in
                             Color.clear.onAppear{
@@ -174,10 +192,11 @@ struct NewScheduleView: View {
                 Spacer()
             }
         }
+        .navigationBarBackButtonHidden(true)
     }
     
     private func validateForm() -> Bool{
-        for(index, task) in tasks.enumerated(){
+        for(index, task) in localSchedule.Tasks.enumerated(){
             if task.title == "" {
                 alertMessage = "Mandatory Information for task \(index + 1) is not present"
                 showAlert = true
@@ -193,6 +212,19 @@ struct NewScheduleView: View {
     }
 }
 
-#Preview {
-    NewScheduleView(scheduleExists: .constant(false))
+struct NewScheduleView_PreviewWrapper: View {
+    @State private var scheduleExists = false
+    
+    var body: some View {
+        NewScheduleView(
+            schedule: Schedule(startTime: Date(), endTime: Date(), Tasks: []),
+            scheduleExists: $scheduleExists,
+            onSave: { _ in }
+        )
+    }
 }
+
+#Preview {
+    NewScheduleView_PreviewWrapper()
+}
+
