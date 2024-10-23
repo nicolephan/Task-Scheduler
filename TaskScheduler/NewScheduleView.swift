@@ -43,181 +43,185 @@ struct NewScheduleView: View {
                     .clipped()
                     .padding(.bottom, -60)
                 
-                VStack{
-                    HStack{     //BUTTONS
-                        Button(action: {
-                            dismiss()
-                        }) {
-                            Image("backButton")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(maxWidth: 40)
-                                .foregroundColor(.backButtonBG)
-                            
-                            
-                        }
-                        Spacer()
-                        Button(action: {
-                            if validateForm() {
-                                scheduleExists = true
-                                onSave(localSchedule)
-                                dismiss()
-                            }
-                        }){
-                            Image(systemName: "checkmark.circle.fill")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(maxWidth: 40)
-                                .foregroundStyle(.blueAccent)
-                        }
-                    }   //BUTTONS END
-                    .padding(.horizontal, 20)
-                    .alert(isPresented: $showAlert) {
-                        Alert(title: Text("Invalid Task"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
-                    }
-                    
-                    Text("New Schedule")
-                        .font(.custom("Manrope-ExtraBold", size: 32))
-                        .foregroundStyle(.text)
-                    
+                ScrollView{
                     VStack{
-                        Text("Time range")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .font(.custom("Manrope-ExtraBold", size: 18))
-                            .foregroundStyle(.text)
-                        
-                        
-                        HStack {
-                            VStack { // FROM TIME
-                                Text("From")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .font(.custom("Manrope-ExtraBold", size: 18))
-                                    .foregroundStyle(Color.white.opacity(0.5))
-                                    .padding(.bottom, -15)
-                                    .padding(.horizontal, 15)
-                                
-                                GeometryReader { geo in
-                                    DatePicker("", selection: $localSchedule.startTime, displayedComponents: .hourAndMinute)
-                                        .labelsHidden()
-                                        .colorScheme(.dark)
-                                        .blendMode(.lighten)
-                                        .scaleEffect(x: geo.size.width / datepickersize.width, y: geo.size.width / datepickersize.width, anchor: .topLeading)
-                                        .onChange(of: localSchedule.startTime) {
-                                            if localSchedule.startTime > localSchedule.endTime {
-                                                localSchedule.endTime = localSchedule.startTime
-                                            }
-                                        }
-                                }
-                            }
-                            
-                            VStack {
-                                Spacer()
-                                Image(systemName: "arrow.right")
+                        HStack{     //BUTTONS
+                            Button(action: {
+                                dismiss()
+                            }) {
+                                Image("backButton")
                                     .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 24, height: 19)
-                                    .padding(.vertical, -32)
-                            }
-                            
-                            VStack { // TO TIME
-                                Text("To")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .font(.custom("Manrope-ExtraBold", size: 18))
-                                    .foregroundStyle(Color.white.opacity(0.5))
-                                    .padding(.horizontal)
-                                    .padding(.bottom, -15)
+                                    .scaledToFit()
+                                    .frame(maxWidth: 40)
+                                    .foregroundColor(.backButtonBG)
                                 
-                                GeometryReader { geo in
-                                    DatePicker("", selection: $localSchedule.endTime, displayedComponents: .hourAndMinute)
-                                        .labelsHidden()
-                                        .colorScheme(.dark)
-                                        .blendMode(.lighten)
-                                        .scaleEffect(x: geo.size.width / datepickersize.width, y: geo.size.width / datepickersize.width, anchor: .topLeading)
-                                        .onChange(of: localSchedule.endTime) {
-                                            if localSchedule.endTime < localSchedule.startTime {
-                                                localSchedule.startTime = localSchedule.endTime
-                                            }
-                                        }
-                                }
+                                
                             }
+                            Spacer()
+                            Button(action: {
+                                if validateForm() {
+                                    scheduleExists = true
+                                    onSave(localSchedule)
+                                    dismiss()
+                                }
+                            }){
+                                Image(systemName: "checkmark.circle.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(maxWidth: 40)
+                                    .foregroundStyle(.blueAccent)
+                            }
+                        }   //BUTTONS END
+                        .padding(.horizontal, 20)
+                        .alert(isPresented: $showAlert) {
+                            Alert(title: Text("Invalid Task"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
                         }
-                        .padding(30)
-                        .foregroundColor(.white)
-                        .background(.blueAccent)
-                        .cornerRadius(20)
-                        .frame(height: 125)
-                        .shadow(radius: 4, x: 0, y: 4)
                         
-                        Text("Tasks")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .font(.custom("Manrope-ExtraBold", size: 18))
+                        Text("New Schedule")
+                            .font(.custom("Manrope-ExtraBold", size: 32))
                             .foregroundStyle(.text)
-                            .padding(.top)
                         
-                        VStack {
+                        VStack{
+                            Text("Time range")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .font(.custom("Manrope-ExtraBold", size: 18))
+                                .foregroundStyle(.text)
                             
-                            ForEach(localSchedule.Tasks.indices, id:\.self){index in
-                                HStack{
-                                    TextField("", text: $localSchedule.Tasks[index].title)
-                                        .padding(10)
-                                        .background(RoundedRectangle(cornerRadius: 10)
-                                            .fill(Color.white))
-                                        .frame(height: 44)
-                                        .foregroundStyle(.text)
+                            
+                            HStack {
+                                VStack { // FROM TIME
+                                    Text("From")
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .font(.custom("Manrope-ExtraBold", size: 18))
+                                        .foregroundStyle(Color.white.opacity(0.5))
+                                        .padding(.bottom, -15)
+                                        .padding(.horizontal, 15)
                                     
-                                    NavigationLink(destination: NewTaskView(task: $localSchedule.Tasks[index])) {
-                                        Image("pencil")
-                                            .resizable()
-                                            .frame(width: 24, height: 24)
-                                            .padding(.leading, 10)
-                                            .foregroundColor(.white)
+                                    GeometryReader { geo in
+                                        DatePicker("", selection: $localSchedule.startTime, displayedComponents: .hourAndMinute)
+                                            .labelsHidden()
+                                            .colorScheme(.dark)
+                                            .blendMode(.lighten)
+                                            .scaleEffect(x: geo.size.width / datepickersize.width, y: geo.size.width / datepickersize.width, anchor: .topLeading)
+                                            .onChange(of: localSchedule.startTime) {
+                                                if localSchedule.startTime > localSchedule.endTime {
+                                                    localSchedule.endTime = localSchedule.startTime
+                                                }
+                                            }
+                                            .accentColor(.yellow)
+                                    }
+                                }
+                                
+                                VStack {
+                                    Spacer()
+                                    Image(systemName: "arrow.right")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 24, height: 19)
+                                        .padding(.vertical, -32)
+                                }
+                                
+                                VStack { // TO TIME
+                                    Text("To")
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .font(.custom("Manrope-ExtraBold", size: 18))
+                                        .foregroundStyle(Color.white.opacity(0.5))
+                                        .padding(.horizontal)
+                                        .padding(.bottom, -15)
+                                    
+                                    GeometryReader { geo in
+                                        DatePicker("", selection: $localSchedule.endTime, displayedComponents: .hourAndMinute)
+                                            .labelsHidden()
+                                            .colorScheme(.dark)
+                                            .blendMode(.lighten)
+                                            .scaleEffect(x: geo.size.width / datepickersize.width, y: geo.size.width / datepickersize.width, anchor: .topLeading)
+                                            .onChange(of: localSchedule.endTime) {
+                                                if localSchedule.endTime < localSchedule.startTime {
+                                                    localSchedule.startTime = localSchedule.endTime
+                                                }
+                                            }
+                                            .accentColor(.yellow)
                                     }
                                 }
                             }
+                            .padding(30)
+                            .foregroundColor(.white)
+                            .background(.blueAccent)
+                            .cornerRadius(20)
+                            .frame(height: 125)
+                            .shadow(radius: 4, x: 0, y: 4)
                             
-                            HStack{
-                                Button(action: {
-                                    let newTask = Task(title: "", exactStart: false, taskDuration: 0, priority: "Low", addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "", startTime: Date())
-                                    
-                                    localSchedule.Tasks.append(newTask)
-                                }) {
-                                    Image("plus")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 30, height: 30)
-                                        .foregroundColor(.white)
-                                        .frame(maxWidth: .infinity, minHeight: 44)
-                                        .background(Color(red: 68/255, green: 115/255, blue: 207/255))
-                                        .cornerRadius(10)
-                                }
-                                .padding(.top, 10)
+                            Text("Tasks")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .font(.custom("Manrope-ExtraBold", size: 18))
+                                .foregroundStyle(.text)
+                                .padding(.top)
+                            
+                            VStack {
                                 
-                                Spacer()
-                                    .frame(width: 40)
-                            }
-                            
-                        }
-                        .padding(30)
-                        .background(Color(red: 95/255, green: 149/255, blue: 231/255))
-                        .cornerRadius(20)
-                        .shadow(radius: 4, x: 0, y: 4)
-                    }
-                    .padding()
-                    
-                    // INVISIBLE DATEPICKER FOR RESIZE
-                    DatePicker("", selection: $localSchedule.startTime, displayedComponents: .hourAndMinute)
-                        .background(
-                            GeometryReader { geo in
-                                Color.clear.onAppear{
-                                    datepickersize = geo.size
+                                ForEach(localSchedule.Tasks.indices, id:\.self){index in
+                                    HStack{
+                                        TextField("", text: $localSchedule.Tasks[index].title)
+                                            .padding(10)
+                                            .background(RoundedRectangle(cornerRadius: 10)
+                                                .fill(Color.white))
+                                            .frame(height: 44)
+                                            .foregroundStyle(.text)
+                                        
+                                        NavigationLink(destination: NewTaskView(task: $localSchedule.Tasks[index])) {
+                                            Image("pencil")
+                                                .resizable()
+                                                .frame(width: 24, height: 24)
+                                                .padding(.leading, 10)
+                                                .foregroundColor(.white)
+                                        }
+                                    }
                                 }
+                                
+                                HStack{
+                                    Button(action: {
+                                        let newTask = Task(title: "", exactStart: false, taskDuration: 0, priority: "Low", addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "", startTime: Date())
+                                        
+                                        localSchedule.Tasks.append(newTask)
+                                    }) {
+                                        Image("plus")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 30, height: 30)
+                                            .foregroundColor(.white)
+                                            .frame(maxWidth: .infinity, minHeight: 44)
+                                            .background(Color(red: 68/255, green: 115/255, blue: 207/255))
+                                            .cornerRadius(10)
+                                    }
+                                    .padding(.top, 10)
+                                    
+                                    Spacer()
+                                        .frame(width: 40)
+                                }
+                                
                             }
-                        )
-                        .allowsHitTesting(false)
-                        .fixedSize()
-                        .opacity(0)
-                    
-                    Spacer()
+                            .padding(30)
+                            .background(Color(red: 95/255, green: 149/255, blue: 231/255))
+                            .cornerRadius(20)
+                            .shadow(radius: 4, x: 0, y: 4)
+                        }
+                        .padding()
+                        
+                        // INVISIBLE DATEPICKER FOR RESIZE
+                        DatePicker("", selection: $localSchedule.startTime, displayedComponents: .hourAndMinute)
+                            .background(
+                                GeometryReader { geo in
+                                    Color.clear.onAppear{
+                                        datepickersize = geo.size
+                                    }
+                                }
+                            )
+                            .allowsHitTesting(false)
+                            .fixedSize()
+                            .opacity(0)
+                        
+                        Spacer()
+                    }
                 }
             }
         }
