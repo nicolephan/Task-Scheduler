@@ -61,7 +61,6 @@ struct NewScheduleView: View {
                             if validateForm() {
                                 scheduleExists = true
                                 onSave(localSchedule)
-                                dismiss()
                             }
                         }){
                             Image(systemName: "checkmark.circle.fill")
@@ -69,6 +68,9 @@ struct NewScheduleView: View {
                                 .scaledToFit()
                                 .frame(maxWidth: 40)
                                 .foregroundStyle(.blueAccent)
+                        }
+                        .navigationDestination(isPresented: $scheduleExists) {
+                            PreviewView()
                         }
                     }   //BUTTONS END
                     .padding(.horizontal, 20)
