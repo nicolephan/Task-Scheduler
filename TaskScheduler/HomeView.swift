@@ -27,85 +27,14 @@ struct HomeView: View {
         startTime: Date()
     )
     
-    let hours = Array(0...23)
-    let heightPerHour = 60
-    let lineHeight = 2 // Height of calendar lines
+    
     
     var body: some View {
         NavigationStack {
             ZStack {
-                ScrollViewReader { scrollProxy in
-                    HStack { // Title
-                        Text("Sept 26, 2024") // TODO: Fix date
-                            .font(.custom("Manrope-ExtraBold", size: 32))
-                            .foregroundStyle(.text)
-                            .padding(25)
-
-                        Spacer()
-                    }
-                    
-                    ScrollView { // Calendar
-                        ZStack {
-                            VStack(spacing: -20.3) {
-                                ForEach(hours, id: \.self) { hour in
-                                    HStack() {
-                                        Spacer()
-                                        
-                                        Text("\(formattedHour(hour))") // Time labels on the left
-                                            .frame(width: 60, alignment: .leading)
-                                            .font(.custom("Manrope-ExtraBold", size: 18))
-                                            .foregroundColor(.text)
-                                            .opacity(0.7)
-                                        
-                                        Rectangle() // Calendar lines
-                                            .fill(.text)
-                                            .frame(height: CGFloat(lineHeight))
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                            .opacity(0.1)
-                                    }
-                                    .padding(.vertical, 18)
-                                }
-                            }
-                            .padding()
-                            
-                            
-                            HStack { // TODO: Example task block
-                                Spacer()
-                                    .frame(width: 60)
-                                    .padding()
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(.blue)
-                                    .frame(height: CGFloat(heightPerHour)) // height will change
-                                    .offset(x: -10, y: 30) // y will change. y = -690 for 12 AM, y = 690 for 11 PM
-                            }
-                            
-                            TimelineView(.animation(minimumInterval: 1.0)) { timeline in
-                                let date = timeline.date
-                                let pos = calculatePosition(for: date)
-                                
-                                HStack(spacing: 0) {
-                                    Spacer()
-                                    Circle()
-                                        .fill(.redAccent)
-                                        .frame(width: 14)
-                                    
-                                    Rectangle()
-                                        .fill(.redAccent)
-                                        .frame(width: 300, height: 2)
-                                }
-                                .padding()
-                                .offset(y: pos)
-                            }
-                            .padding()
-                            .offset(y: CGFloat(0))
-                        }
-                    }
-                    .onAppear {
-                        // Scroll to 7 AM (which is hour 7) when the view first appears
-                        scrollProxy.scrollTo(7, anchor: .top)
-                    }
+                CalendarView {
+                    redMarkerView()
                 }
-                .padding(.leading, -5)
                 
                 VStack { // Plus button
                     Spacer()
@@ -155,15 +84,24 @@ struct HomeView: View {
         }
     } // view ends
     
-    func formattedHour(_ hour: Int) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "h a" // 'h a' formats as 12-hour time (1 PM, 2 AM, etc.)
-        
-        var dateComponents = DateComponents()
-        dateComponents.hour = hour
-        let date = Calendar.current.date(from: dateComponents)!
-        
-        return formatter.string(from: date)
+    func redMarkerView() -> some View {
+        TimelineView(.animation(minimumInterval: 1.0)) { timeline in
+            let date = timeline.date
+            let pos = calculatePosition(for: date)
+            
+            HStack(spacing: 0) {
+                Spacer()
+                Circle()
+                    .fill(.redAccent)
+                    .frame(width: 14)
+                
+                Rectangle()
+                    .fill(.redAccent)
+                    .frame(width: 300, height: 2)
+            }
+            .padding()
+            .offset(y: pos)
+        }
     }
     
     func calculatePosition(for date: Date) -> CGFloat {
