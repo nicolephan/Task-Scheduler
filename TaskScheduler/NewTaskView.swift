@@ -122,13 +122,14 @@ struct NewTaskView: View {
         task.exactStart = localTask.exactStart
         task.startTime = localTask.startTime
         task.taskDuration = (Int(taskHours) ?? 0) * 60 + (Int(taskMins) ?? 0)
+        task.addBreaks = localTask.addBreaks
+        task.priority = localTask.priority
+        task.description = localTask.description
+        
         if task.addBreaks{
             task.breakDuration = (Int(breakDurationHours) ?? 0) * 60 + (Int(breakDurationMins) ?? 0)
             task.breaksEvery = (Int(breakFrequencyHours) ?? 0) * 60 + (Int(breakFrequencyMins) ?? 0)
         }
-        task.priority = localTask.priority
-                task.addBreaks = localTask.addBreaks
-                task.description = localTask.description
         
         dismiss()
     }
