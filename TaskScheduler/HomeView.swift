@@ -12,6 +12,7 @@ struct HomeView: View {
     @State private var scheduleExists: Bool = false
     @State private var navigateToViewSchedule: Bool = false
     @State private var navigateToNewTask: Bool = false
+    @State private var redMarkerOffset: Int = -720 // 12 AM offset is y = -720. 11 PM offset is y = 660.
     
     @State private var task = Task(
         title: "",
@@ -27,6 +28,7 @@ struct HomeView: View {
     
     let hours = Array(0...23)
     let heightPerHour = 60
+    let lineHeight = 2 // Height of calendar lines
     
     var body: some View {
         NavigationStack {
@@ -42,7 +44,7 @@ struct HomeView: View {
                     
                     ScrollView { // Calendar
                         ZStack {
-                            VStack(spacing: 0) {
+                            VStack(spacing: -20.3) {
                                 ForEach(hours, id: \.self) { hour in
                                     HStack() {
                                         Spacer()
@@ -53,12 +55,12 @@ struct HomeView: View {
                                             .opacity(0.7)
                                         
                                         Rectangle() // Calendar lines
-                                            .background(.text)
-                                            .frame(height: 2)
+                                            .fill(.text)
+                                            .frame(height: CGFloat(lineHeight))
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                             .opacity(0.1)
                                     }
-                                    .padding(.vertical, 20)
+                                    .padding(.bottom, 60)
                                 }
                             }
                             .padding()
@@ -71,21 +73,26 @@ struct HomeView: View {
                                 RoundedRectangle(cornerRadius: 16)
                                     .fill(.blue)
                                     .frame(height: CGFloat(heightPerHour)) // height will change
-                                    .offset(x: -10, y: 0) // y will change
+                                    .offset(x: -10, y: 30) // y will change. y = -690 for 12 AM, y = 690 for 11 PM
                             }
                             
-                            HStack(spacing: 0) { // Red marker
-                                Spacer()
-                                Circle()
-                                    .fill(.redAccent)
-                                    .frame(width: 14)
+                            TimelineView(.animation(minimumInterval: 1.0)) { timeline in
+                                let date = timeline.date
+                                let pos = calculatePosition(for: date)
                                 
-                                Rectangle()
-                                    .fill(.redAccent)
-                                    .frame(width: 300, height: 2)
+                                HStack(spacing: 0) {
+                                    Spacer()
+                                    Circle()
+                                        .fill(.redAccent)
+                                        .frame(width: 14)
+                                    
+                                    Rectangle()
+                                        .fill(.redAccent)
+                                        .frame(width: 300, height: 2)
+                                }
+                                .padding()
+                                .offset(y: pos)
                             }
-                            .padding()
-                            .offset(y: CGFloat(0)) // TODO: Fix
                         }
                     }
                     .onAppear {
@@ -152,13 +159,14 @@ struct HomeView: View {
         return formatter.string(from: date)
     }
     
-    func calculatePosition() -> CGFloat {
+    func calculatePosition(for date: Date) -> CGFloat {
         let components = Calendar.current.dateComponents([.hour, .minute], from: .now)
         let hour = components.hour ?? 0
         let minute = components.minute ?? 0
 
-//        print(CGFloat(hour * heightPerHour + minute))
-        return CGFloat(hour * heightPerHour + minute)
+        let totalMinutes = (hour * 60) + minute
+        
+        return CGFloat(totalMinutes + redMarkerOffset)
     }
 }
     
