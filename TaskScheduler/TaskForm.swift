@@ -16,6 +16,8 @@ struct TaskForm: View {
     @Binding var breakFrequencyHours: String
     @Binding var breakFrequencyMins: String
     
+    var onValidationError:((String) -> Void)?
+    
     var body: some View {
         VStack{
             TextField("Title", text: $task.title)
@@ -49,8 +51,10 @@ struct TaskForm: View {
                     }
                 }
                 
-                HStack{
+                HStack(spacing: 1){
                     Text("Duration")
+                    Text("*")
+                        .foregroundColor(.red)
                     Spacer()
                     TextField("xx", text: $taskHours)
                         .keyboardType(.numberPad)
@@ -125,11 +129,12 @@ struct TaskForm: View {
                     Toggle("", isOn: $task.addBreaks)
                         .disabled(!isEditable)
                 }
-                .padding([.leading, .trailing])
                 
                 if task.addBreaks{
                     HStack {
                         Text("Breaks Every")
+                        Text("*")
+                            .foregroundColor(.red)
                         Spacer()
                         TextField("xx", text: $breakFrequencyHours)
                             .keyboardType(.numberPad)
@@ -151,8 +156,10 @@ struct TaskForm: View {
                             .disabled(!isEditable)
                         Text("m")
                     }
-                    HStack {
+                    HStack(spacing: 1) {
                         Text("Duration")
+                        Text("*")
+                            .foregroundColor(.red)
                         Spacer()
                         TextField("xx", text: $breakDurationHours)
                             .keyboardType(.numberPad)
@@ -194,6 +201,43 @@ struct TaskForm: View {
                 .disabled(!isEditable)
             Spacer()
         }
+    }
+    
+    func validateTask() -> Bool{
+        if task.title == ""{
+            onValidationError?("Task title cannot be empty.")
+            return false
+        }
+        
+        let taskDuration = (Int(taskHours) ?? 0) * 60 + (Int(taskMins) ?? 0)
+        
+        if taskDuration == 0{
+            onValidationError?("Task duration cannot be zero.")
+            return false
+        }
+        
+        let breakDuration = (Int(breakDurationHours) ?? 0) * 60 + (Int(breakDurationMins) ?? 0)
+        let breakFrequency = (Int(breakFrequencyHours) ?? 0) * 60 + (Int(breakFrequencyMins) ?? 0)
+        
+        if task.addBreaks {
+            if breakDuration == 0{
+                onValidationError?("Break duration cannot be zero.")
+                return false
+            }
+            if breakFrequency == 0{
+                onValidationError?("Break frequency cannot be zero.")
+                return false
+            }
+            if breakFrequency >= taskDuration {
+                onValidationError?("Break frequency cannot be greater than or equal to task duration.")
+                return false
+            }
+            if breakDuration >= taskDuration {
+                onValidationError?("Break duration cannot be greater than or equal to task duration.")
+                return false
+            }
+        }
+        return true
     }
 }
 

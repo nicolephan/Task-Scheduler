@@ -14,6 +14,8 @@ struct NewTaskView: View {
         self._task = task
         self._localTask = State(initialValue: task.wrappedValue)
     }
+    @State private var showAlert = false
+    @State private var alertMessage = ""
     
     @State private var taskHours: String = ""
     @State private var taskMins: String = ""
@@ -43,7 +45,9 @@ struct NewTaskView: View {
                 Spacer()
                 
                 Button(action: {
-                    saveTask()
+                    if validateTask() {
+                        saveTask()
+                    }
                 }){
                     Image(systemName: "checkmark.circle.fill")
                         .resizable()
@@ -52,17 +56,68 @@ struct NewTaskView: View {
                 }
             }   //BUTTONS END
             .padding(20)
+            .onAppear {
+               let totalDuration = task.taskDuration
+               taskHours = String(totalDuration / 60)
+               taskMins = String(totalDuration % 60)
+               
+               if task.addBreaks {
+                   breakDurationHours = String(task.breakDuration / 60)
+                   breakDurationMins = String(task.breakDuration % 60)
+                   breakFrequencyHours = String(task.breaksEvery / 60)
+                   breakFrequencyMins = String(task.breaksEvery % 60)
+               }
+           }
             Spacer().frame(maxHeight: 15)
             
-            TaskForm(task: $localTask, isEditable: true, taskHours: $taskHours, taskMins: $taskMins, breakDurationHours: $breakDurationHours, breakDurationMins: $breakDurationMins, breakFrequencyHours: $breakFrequencyHours, breakFrequencyMins: $breakFrequencyMins)
+            TaskForm(task: $localTask, isEditable: true, taskHours: $taskHours, taskMins: $taskMins, breakDurationHours: $breakDurationHours, breakDurationMins: $breakDurationMins, breakFrequencyHours: $breakFrequencyHours, breakFrequencyMins: $breakFrequencyMins,
+                onValidationError: {error in
+                    alertMessage = error
+                    showAlert = true
+                }
+            )
+            .onAppear {
+               let totalDuration = task.taskDuration
+               taskHours = String(totalDuration / 60)
+               taskMins = String(totalDuration % 60)
+               
+               if task.addBreaks {
+                   breakDurationHours = String(task.breakDuration / 60)
+                   breakDurationMins = String(task.breakDuration % 60)
+                   breakFrequencyHours = String(task.breaksEvery / 60)
+                   breakFrequencyMins = String(task.breaksEvery % 60)
+               }
+           }
         }
         .navigationBarBackButtonHidden(true)
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+        }
+    }
+    
+    private func validateTask() -> Bool {
+        let taskForm = TaskForm(
+            task: $localTask,
+            isEditable: true,
+            taskHours: $taskHours,
+            taskMins: $taskMins,
+            breakDurationHours: $breakDurationHours,
+            breakDurationMins: $breakDurationMins,
+            breakFrequencyHours: $breakFrequencyHours,
+            breakFrequencyMins: $breakFrequencyMins,
+            onValidationError: { error in
+                alertMessage = error
+                showAlert = true
+            }
+        )
+        
+        return taskForm.validateTask()
     }
     
     private func saveTask(){
         task.title = localTask.title
-                task.exactStart = localTask.exactStart
-                task.startTime = localTask.startTime
+        task.exactStart = localTask.exactStart
+        task.startTime = localTask.startTime
         task.taskDuration = (Int(taskHours) ?? 0) * 60 + (Int(taskMins) ?? 0)
         if task.addBreaks{
             task.breakDuration = (Int(breakDurationHours) ?? 0) * 60 + (Int(breakDurationMins) ?? 0)
