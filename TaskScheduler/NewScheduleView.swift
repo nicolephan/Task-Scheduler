@@ -9,175 +9,223 @@ struct NewScheduleView: View {
     
     @Environment(\.dismiss) var dismiss
     
-    @State private var fromTime = Date()
-    @State private var toTime = Date()
-    @State private var tasks: [Task] = [Task(title: "", exactStart: false, taskDuration: 0, priority: "Low", addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "", startTime: Date())]
-    
+    @State private var localSchedule: Schedule
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
     
     @State var datepickersize: CGSize = .zero
     @Binding var scheduleExists: Bool
+    var onSave: (Schedule) -> Void
+    
+    init(schedule: Schedule, scheduleExists: Binding<Bool>, onSave: @escaping (Schedule) -> Void) {
+        var modifiedSchedule = schedule
+        let emptyTask = Task(
+            title: "",
+            exactStart: false,
+            taskDuration: 0,
+            priority: "Low",
+            addBreaks: false,
+            breaksEvery: 0,
+            breakDuration: 0,
+            description: "",
+            startTime: Date()
+        )
+        modifiedSchedule.Tasks.append(emptyTask)
+        self._localSchedule = State(initialValue: modifiedSchedule)
+        self.onSave = onSave
+        self._scheduleExists = scheduleExists
+    }
     
     var body: some View {
         NavigationView{
-            VStack{
-                HStack{     //BUTTONS
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        Image(systemName: "arrow.backward.circle.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxWidth: 40)
-                            .foregroundColor(.gray)
-                        
-                        
-                    }
-                    Spacer()
-                    Button(action: {
-                        if validateForm() {
-                            scheduleExists = true
-                            dismiss()
-                        }
-                    }){
-                        Image(systemName: "checkmark.circle.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxWidth: 40)
-                    }
-                }   //BUTTONS END
-                .padding(20)
-                .alert(isPresented: $showAlert) {
-                    Alert(title: Text("Invalid Task"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
-                }
-                
-                Text("New Schedule")
-                    .font(.largeTitle)
+            ZStack(alignment: .bottom) {
+                Image("sky-boy")
+                    .clipped()
+                    .padding(.bottom, -60)
                 
                 VStack{
-                    Text("Time range")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .font(.title2)
-                    
-                    
-                    
-                    HStack{
-                        VStack{ // FROM TIME
-                            Text("From")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.leading)
-                            GeometryReader { geo in
-                                DatePicker("", selection: $fromTime, displayedComponents: .hourAndMinute)
-                                    .labelsHidden()
-                                    .colorScheme(.dark)
-                                    .scaleEffect(x: geo.size.width / datepickersize.width, y: geo.size.width / datepickersize.width, anchor: .topLeading)
-                                    .onChange(of: fromTime) {
-                                        if fromTime > toTime {
-                                            toTime = fromTime
-                                        }
-                                    }
-                            }
+                    HStack{     //BUTTONS
+                        Button(action: {
+                            dismiss()
+                        }) {
+                            Image("backButton")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(maxWidth: 40)
+                                .foregroundColor(.backButtonBG)
+                            
+                            
                         }
-                        
-                        Image(systemName: "arrow.right")
-                        
-                        VStack{ // TO TIME
-                            Text("To")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.leading)
-                            GeometryReader { geo in
-                                DatePicker("", selection: $toTime, displayedComponents: .hourAndMinute)
-                                    .labelsHidden()
-                                    .colorScheme(.dark)
-                                    .scaleEffect(x: geo.size.width / datepickersize.width, y: geo.size.width / datepickersize.width, anchor: .topLeading)
-                                    .onChange(of: toTime) {
-                                        if toTime < fromTime {
-                                            fromTime = toTime
-                                        }
-                                    }
+                        Spacer()
+                        Button(action: {
+                            if validateForm() {
+                                scheduleExists = true
+                                onSave(localSchedule)
+                                dismiss()
                             }
+                        }){
+                            Image(systemName: "checkmark.circle.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(maxWidth: 40)
+                                .foregroundStyle(.blueAccent)
                         }
+                    }   //BUTTONS END
+                    .padding(.horizontal, 20)
+                    .alert(isPresented: $showAlert) {
+                        Alert(title: Text("Invalid Task"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
                     }
-                    .padding(30)
-                    .foregroundColor(.white)
-                    .background(Color(red: 95/255, green: 149/255, blue: 231/255))
-                    .cornerRadius(20)
-                    .frame(height: 150)
                     
+                    Text("New Schedule")
+                        .font(.custom("Manrope-ExtraBold", size: 32))
+                        .foregroundStyle(.text)
                     
-                    Text("Tasks")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .font(.title2)
-                        .padding()
                     VStack{
+                        Text("Time range")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .font(.custom("Manrope-ExtraBold", size: 18))
+                            .foregroundStyle(.text)
                         
-                        ForEach(tasks.indices, id:\.self){index in
-                            HStack{
-                                TextField("", text: $tasks[index].title)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                                    .frame(height: 40)
+                        
+                        HStack {
+                            VStack { // FROM TIME
+                                Text("From")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .font(.custom("Manrope-ExtraBold", size: 18))
+                                    .foregroundStyle(Color.white.opacity(0.5))
+                                    .padding(.bottom, -15)
+                                    .padding(.horizontal, 15)
                                 
-                                NavigationLink(destination: NewTaskView(task: $tasks[index])) {
-                                    Image(systemName: "pencil")
-                                        .resizable()
-                                        .frame(width: 20, height: 20)
-                                        .padding(.leading, 10)
-                                        .foregroundColor(.white)
+                                GeometryReader { geo in
+                                    DatePicker("", selection: $localSchedule.startTime, displayedComponents: .hourAndMinute)
+                                        .labelsHidden()
+                                        .colorScheme(.dark)
+                                        .blendMode(.lighten)
+                                        .scaleEffect(x: geo.size.width / datepickersize.width, y: geo.size.width / datepickersize.width, anchor: .topLeading)
+                                        .onChange(of: localSchedule.startTime) {
+                                            if localSchedule.startTime > localSchedule.endTime {
+                                                localSchedule.endTime = localSchedule.startTime
+                                            }
+                                        }
                                 }
                             }
-                            .padding(5)
-                        }
-                        
-                        HStack{
-                            Button(action: {
-                                let newTask = Task(title: "", exactStart: false, taskDuration: 0, priority: "Low", addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "", startTime: Date())
-
-                                tasks.append(newTask)
-                            }) {
-                                Image(systemName: "plus")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 30, height: 30)
-                                    .foregroundColor(.white)
-                                    .frame(maxWidth: .infinity, minHeight: 40)
-                                    .background(Color(red: 68/255, green: 115/255, blue: 207/255))
-                                    .cornerRadius(10)
-                            }
-                            .padding(.top)
                             
-                            Spacer()
-                                .frame(width: 40)
-                        }
-                        
-                    }
-                    .padding(30)
-                    .background(Color(red: 95/255, green: 149/255, blue: 231/255))
-                    .cornerRadius(20)
-                    
-                }
-                .padding()
-                
-                // INVISIBLE DATEPICKER FOR RESIZE
-                DatePicker("", selection: $fromTime, displayedComponents: .hourAndMinute)
-                    .background(
-                        GeometryReader { geo in
-                            Color.clear.onAppear{
-                                datepickersize = geo.size
+                            VStack {
+                                Spacer()
+                                Image(systemName: "arrow.right")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 24, height: 19)
+                                    .padding(.vertical, -32)
+                            }
+                            
+                            VStack { // TO TIME
+                                Text("To")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .font(.custom("Manrope-ExtraBold", size: 18))
+                                    .foregroundStyle(Color.white.opacity(0.5))
+                                    .padding(.horizontal)
+                                    .padding(.bottom, -15)
+                                
+                                GeometryReader { geo in
+                                    DatePicker("", selection: $localSchedule.endTime, displayedComponents: .hourAndMinute)
+                                        .labelsHidden()
+                                        .colorScheme(.dark)
+                                        .blendMode(.lighten)
+                                        .scaleEffect(x: geo.size.width / datepickersize.width, y: geo.size.width / datepickersize.width, anchor: .topLeading)
+                                        .onChange(of: localSchedule.endTime) {
+                                            if localSchedule.endTime < localSchedule.startTime {
+                                                localSchedule.startTime = localSchedule.endTime
+                                            }
+                                        }
+                                }
                             }
                         }
-                    )
-                    .allowsHitTesting(false)
-                    .fixedSize()
-                    .opacity(0)
-                
-                Spacer()
+                        .padding(30)
+                        .foregroundColor(.white)
+                        .background(.blueAccent)
+                        .cornerRadius(20)
+                        .frame(height: 125)
+                        .shadow(radius: 4, x: 0, y: 4)
+                        
+                        Text("Tasks")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .font(.custom("Manrope-ExtraBold", size: 18))
+                            .foregroundStyle(.text)
+                            .padding(.top)
+                        
+                        VStack {
+                            
+                            ForEach(localSchedule.Tasks.indices, id:\.self){index in
+                                HStack{
+                                    TextField("", text: $localSchedule.Tasks[index].title)
+                                        .padding(10)
+                                        .background(RoundedRectangle(cornerRadius: 10)
+                                            .fill(Color.white))
+                                        .frame(height: 44)
+                                        .foregroundStyle(.text)
+                                    
+                                    NavigationLink(destination: NewTaskView(task: $localSchedule.Tasks[index])) {
+                                        Image("pencil")
+                                            .resizable()
+                                            .frame(width: 24, height: 24)
+                                            .padding(.leading, 10)
+                                            .foregroundColor(.white)
+                                    }
+                                }
+                            }
+                            
+                            HStack{
+                                Button(action: {
+                                    let newTask = Task(title: "", exactStart: false, taskDuration: 0, priority: "Low", addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "", startTime: Date())
+                                    
+                                    localSchedule.Tasks.append(newTask)
+                                }) {
+                                    Image("plus")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 30, height: 30)
+                                        .foregroundColor(.white)
+                                        .frame(maxWidth: .infinity, minHeight: 44)
+                                        .background(Color(red: 68/255, green: 115/255, blue: 207/255))
+                                        .cornerRadius(10)
+                                }
+                                .padding(.top, 10)
+                                
+                                Spacer()
+                                    .frame(width: 40)
+                            }
+                            
+                        }
+                        .padding(30)
+                        .background(Color(red: 95/255, green: 149/255, blue: 231/255))
+                        .cornerRadius(20)
+                        .shadow(radius: 4, x: 0, y: 4)
+                    }
+                    .padding()
+                    
+                    // INVISIBLE DATEPICKER FOR RESIZE
+                    DatePicker("", selection: $localSchedule.startTime, displayedComponents: .hourAndMinute)
+                        .background(
+                            GeometryReader { geo in
+                                Color.clear.onAppear{
+                                    datepickersize = geo.size
+                                }
+                            }
+                        )
+                        .allowsHitTesting(false)
+                        .fixedSize()
+                        .opacity(0)
+                    
+                    Spacer()
+                }
             }
         }
+        .navigationBarBackButtonHidden(true)
     }
     
     private func validateForm() -> Bool{
-        for(index, task) in tasks.enumerated(){
+        for(index, task) in localSchedule.Tasks.enumerated(){
             if task.title == "" {
                 alertMessage = "Mandatory Information for task \(index + 1) is not present"
                 showAlert = true
@@ -193,6 +241,19 @@ struct NewScheduleView: View {
     }
 }
 
-#Preview {
-    NewScheduleView(scheduleExists: .constant(false))
+struct NewScheduleView_PreviewWrapper: View {
+    @State private var scheduleExists = false
+    
+    var body: some View {
+        NewScheduleView(
+            schedule: Schedule(startTime: Date(), endTime: Date(), Tasks: []),
+            scheduleExists: $scheduleExists,
+            onSave: { _ in }
+        )
+    }
 }
+
+#Preview {
+    NewScheduleView_PreviewWrapper()
+}
+

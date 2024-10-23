@@ -9,6 +9,8 @@ struct ViewTaskView: View {
 
     @State private var isEditable = false
     @State private var editedTask: Task
+    @State private var showAlert = false
+    @State private var alertMessage = ""
 
     var task: Task {
         didSet {
@@ -67,7 +69,15 @@ struct ViewTaskView: View {
                 Spacer()
                 
                 Button(action: {
-                    isEditable.toggle()
+                    if isEditable{
+                        if validateTask(){
+                            isEditable.toggle()
+                        } else {
+                            showAlert = true
+                        }
+                    } else {
+                        isEditable.toggle()
+                    }
                 }){
                     Image(systemName: isEditable ? "checkmark.circle.fill" : "pencil.circle.fill")
                         .resizable()
@@ -93,6 +103,27 @@ struct ViewTaskView: View {
         .onAppear {
             self.editedTask = task
         }
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+        }
+    }
+    
+    private func validateTask() -> Bool{
+        let taskForm = TaskForm(
+            task: $editedTask,
+            isEditable: isEditable,
+            taskHours: .constant(taskHour),
+            taskMins: .constant(taskMin),
+            breakDurationHours: .constant(breakHour),
+            breakDurationMins: .constant(breakMin),
+            breakFrequencyHours: .constant(BreaksEveryHour),
+            breakFrequencyMins: .constant(BreaksEveryMin),
+            onValidationError: { message in
+                alertMessage = message
+                showAlert = true
+            }
+        )
+        return taskForm.validateTask()
     }
 }
 

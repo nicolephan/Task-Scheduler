@@ -14,6 +14,7 @@ struct HomeView: View {
     @State private var navigateToNewTask: Bool = false
     @State private var redMarkerOffset: Int = -720 // 12 AM offset is y = -720. 11 PM offset is y = 660.
     
+    @State private var currentSchedule: Schedule?
     @State private var task = Task(
         title: "",
         exactStart: false,
@@ -36,9 +37,10 @@ struct HomeView: View {
                 ScrollViewReader { scrollProxy in
                     HStack { // Title
                         Text("Sept 26, 2024") // TODO: Fix date
-                            .font(.title)
+                            .font(.custom("Manrope-ExtraBold", size: 32))
+                            .foregroundStyle(.text)
                             .padding(25)
-                            .bold()
+
                         Spacer()
                     }
                     
@@ -51,6 +53,7 @@ struct HomeView: View {
                                         
                                         Text("\(formattedHour(hour))") // Time labels on the left
                                             .frame(width: 60, alignment: .leading)
+                                            .font(.custom("Manrope-ExtraBold", size: 18))
                                             .foregroundColor(.text)
                                             .opacity(0.7)
                                         
@@ -60,7 +63,7 @@ struct HomeView: View {
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                             .opacity(0.1)
                                     }
-                                    .padding(.bottom, 60)
+                                    .padding(.vertical, 18)
                                 }
                             }
                             .padding()
@@ -93,6 +96,8 @@ struct HomeView: View {
                                 .padding()
                                 .offset(y: pos)
                             }
+                            .padding()
+                            .offset(y: CGFloat(0))
                         }
                     }
                     .onAppear {
@@ -122,7 +127,9 @@ struct HomeView: View {
                                 .shadow(radius: CGFloat(4))
                         }
                         .navigationDestination(isPresented: $navigateToNewSchedule) {
-                            NewScheduleView(scheduleExists: $scheduleExists)
+                            NewScheduleView(schedule: currentSchedule ?? Schedule(startTime: Date(), endTime: Date(), Tasks: []), scheduleExists: $scheduleExists) { newSchedule in
+                                currentSchedule = newSchedule
+                            }
                         }
                         .confirmationDialog("Select Choice", isPresented: $showingOptions, titleVisibility: .visible) {
                             
