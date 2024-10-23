@@ -88,7 +88,7 @@ struct HomeView: View {
                                     .frame(width: 300, height: 2)
                             }
                             .padding()
-                            .offset(y: CGFloat(0)) // TODO: Fix
+                            .offset(y: CGFloat(0))
                         }
                     }
                     .onAppear {

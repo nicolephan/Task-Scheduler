@@ -32,7 +32,7 @@ struct NewTaskView: View {
                 Button(action: {
                     dismiss()
                 }) {
-                    Image(systemName: "arrow.backward.circle.fill")
+                    Image("backButton")
                         .resizable()
                         .scaledToFit()
                         .frame(maxWidth: 40)
@@ -41,7 +41,8 @@ struct NewTaskView: View {
                 
                 Spacer()
                 Text("New Task")
-                    .font(.title2).bold()
+                    .font(.custom("Manrope-ExtraBold", size: 24))
+                    .foregroundStyle(.text)
                 Spacer()
                 
                 Button(action: {
@@ -53,6 +54,7 @@ struct NewTaskView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(maxWidth: 40)
+                        .foregroundStyle(.blueAccent)
                 }
             }   //BUTTONS END
             .padding(20)
@@ -88,6 +90,7 @@ struct NewTaskView: View {
                    breakFrequencyMins = String(task.breaksEvery % 60)
                }
            }
+            .padding(.horizontal, 8)
         }
         .navigationBarBackButtonHidden(true)
         .alert(isPresented: $showAlert) {
