@@ -38,49 +38,50 @@ struct NewScheduleView: View {
     
     var body: some View {
         NavigationView{
-            ZStack(alignment: .bottom) {
-                Image("sky-boy")
-                    .clipped()
-                    .padding(.bottom, -60)
-                
-                ScrollView{
-                    VStack{
-                        HStack{     //BUTTONS
-                            Button(action: {
-                                dismiss()
-                            }) {
-                                Image("backButton")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(maxWidth: 40)
-                                    .foregroundColor(.backButtonBG)
-                                
-                                
-                            }
-                            Spacer()
-                            Button(action: {
-                                if validateForm() {
-                                    scheduleExists = true
-                                    onSave(localSchedule)
-                                    dismiss()
-                                }
-                            }){
-                                Image(systemName: "checkmark.circle.fill")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(maxWidth: 40)
-                                    .foregroundStyle(.blueAccent)
-                            }
-                        }   //BUTTONS END
-                        .padding(.horizontal, 20)
-                        .alert(isPresented: $showAlert) {
-                            Alert(title: Text("Invalid Task"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+            
+            VStack{
+                HStack{     //BUTTONS
+                    Button(action: {
+                        dismiss()
+                    }) {
+                        Image("backButton")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxWidth: 40)
+                            .foregroundColor(.backButtonBG)
+                        
+                        
+                    }
+                    Spacer()
+                    Button(action: {
+                        if validateForm() {
+                            scheduleExists = true
+                            onSave(localSchedule)
+                            dismiss()
                         }
-                        
-                        Text("New Schedule")
-                            .font(.custom("Manrope-ExtraBold", size: 32))
-                            .foregroundStyle(.text)
-                        
+                    }){
+                        Image(systemName: "checkmark.circle.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxWidth: 40)
+                            .foregroundStyle(.blueAccent)
+                    }
+                }   //BUTTONS END
+                .padding(.horizontal, 20)
+                .alert(isPresented: $showAlert) {
+                    Alert(title: Text("Invalid Task"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+                }
+                
+                Text("New Schedule")
+                    .font(.custom("Manrope-ExtraBold", size: 32))
+                    .foregroundStyle(.text)
+                
+                ZStack(alignment: .bottom) {
+                    Image("sky-boy")
+                        .clipped()
+                        .padding(.bottom, -60)
+                    
+                    ScrollView{
                         VStack{
                             Text("Time range")
                                 .frame(maxWidth: .infinity, alignment: .leading)
