@@ -15,15 +15,6 @@ struct CalendarView<Content: View>: View {
     
     var body: some View {
         ScrollViewReader { scrollProxy in
-            HStack {
-                Text("Sept 26, 2024") // TODO: Fix date
-                    .font(.custom("Manrope-ExtraBold", size: 32))
-                    .foregroundStyle(.text)
-                    .padding(25)
-
-                Spacer()
-            }
-            
             ScrollView { // Calendar
                 ZStack {
                     VStack(spacing: -24.7) {

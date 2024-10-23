@@ -32,8 +32,19 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                CalendarView {
-                    redMarkerView()
+                VStack {
+                    HStack {
+                        Text("Sept 26, 2024") // TODO: Fix date
+                            .font(.custom("Manrope-ExtraBold", size: 32))
+                            .foregroundStyle(.text)
+                            .padding(25)
+                        
+                        Spacer()
+                    }
+                    
+                    CalendarView {
+                        redMarkerView()
+                    }
                 }
                 
                 VStack { // Plus button

@@ -16,6 +16,7 @@
 		7931891D2CB77B4B00E6668B /* Schedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7931891C2CB77B4B00E6668B /* Schedule.swift */; };
 		79318B902CC8AA6400E6668B /* Manrope-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 79318B8F2CC8AA6400E6668B /* Manrope-VariableFont_wght.ttf */; };
 		797AB3FB2CC97CF900EF81F2 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797AB3FA2CC97CF900EF81F2 /* CalendarView.swift */; };
+		797AB3FD2CC97F3400EF81F2 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797AB3FC2CC97F3400EF81F2 /* PreviewView.swift */; };
 		F4167FB52CC5A72100AFB28A /* ViewTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4167FB42CC5A72100AFB28A /* ViewTaskView.swift */; };
 		F48E4A1B2CC4624E00761167 /* NewTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F48E4A1A2CC4624E00761167 /* NewTaskView.swift */; };
 		F491571F2CC5FF52009C3D5E /* TaskForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = F491571E2CC5FF52009C3D5E /* TaskForm.swift */; };
@@ -34,6 +35,7 @@
 		79318B8F2CC8AA6400E6668B /* Manrope-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Manrope-VariableFont_wght.ttf"; sourceTree = "<group>"; };
 		79318B912CC8AAC600E6668B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		797AB3FA2CC97CF900EF81F2 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		797AB3FC2CC97F3400EF81F2 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 		F4167FB42CC5A72100AFB28A /* ViewTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewTaskView.swift; sourceTree = "<group>"; };
 		F48E4A1A2CC4624E00761167 /* NewTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTaskView.swift; sourceTree = "<group>"; };
 		F491571E2CC5FF52009C3D5E /* TaskForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskForm.swift; sourceTree = "<group>"; };
@@ -74,6 +76,7 @@
 				792854572CAF7BDE00173C27 /* TaskSchedulerApp.swift */,
 				792854592CAF7BDE00173C27 /* ContentView.swift */,
 				793189092CB772C200E6668B /* HomeView.swift */,
+				797AB3FC2CC97F3400EF81F2 /* PreviewView.swift */,
 				797AB3FA2CC97CF900EF81F2 /* CalendarView.swift */,
 				F4DAE2752CB8A5090002AD3A /* NewScheduleView.swift */,
 				79318B8F2CC8AA6400E6668B /* Manrope-VariableFont_wght.ttf */,
@@ -178,6 +181,7 @@
 				797AB3FB2CC97CF900EF81F2 /* CalendarView.swift in Sources */,
 				F4DAE2762CB8A5090002AD3A /* NewScheduleView.swift in Sources */,
 				F48E4A1B2CC4624E00761167 /* NewTaskView.swift in Sources */,
+				797AB3FD2CC97F3400EF81F2 /* PreviewView.swift in Sources */,
 				7931891B2CB77B0800E6668B /* Task.swift in Sources */,
 				7931890A2CB772C200E6668B /* HomeView.swift in Sources */,
 				7928545A2CAF7BDE00173C27 /* ContentView.swift in Sources */,
