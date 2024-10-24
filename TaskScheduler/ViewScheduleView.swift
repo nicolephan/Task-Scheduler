@@ -122,6 +122,7 @@ struct ViewScheduleView: View {
                                         .aspectRatio(contentMode: .fill)
                                         .frame(width: 24, height: 19)
                                         .padding(.vertical, -28)
+                                        .padding(.trailing, 15)
                                 }
                                 
                                 VStack { // TO TIME
