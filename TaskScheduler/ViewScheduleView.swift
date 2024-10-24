@@ -24,8 +24,6 @@ struct ViewScheduleView: View {
     }
     
     var body: some View {
-        NavigationView{
-            
             VStack{
                 HStack{     //BUTTONS
                     Button(action: {
@@ -237,7 +235,6 @@ struct ViewScheduleView: View {
                 }
             }
             .navigationBarBackButtonHidden(true)
-        }
     }
     
     private func validateForm() -> Bool{

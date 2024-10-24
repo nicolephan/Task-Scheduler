@@ -9,6 +9,8 @@ struct PreviewView: View {
     
     @Environment(\.dismiss) var dismiss
     
+    var onConfirm: () -> Void
+    
     var body: some View {
         VStack {
             HStack{     //BUTTONS
@@ -31,7 +33,8 @@ struct PreviewView: View {
                 Button(action: {
                     // TODO: Add task to calendar
                     
-                    dismiss()
+                    
+                    onConfirm()
                 }){
                     Image(systemName: "checkmark.circle.fill")
                         .resizable()
@@ -53,5 +56,5 @@ struct PreviewView: View {
 }
 
 #Preview {
-    PreviewView()
+    PreviewView(onConfirm: {})
 }

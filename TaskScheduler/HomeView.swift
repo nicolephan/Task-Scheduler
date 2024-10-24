@@ -8,7 +8,6 @@ import SwiftUI
 struct HomeView: View {
     
     @State private var showingOptions: Bool = false
-    @State private var navigateToNewSchedule: Bool = false
     @State private var scheduleExists: Bool = false
     @State private var navigateToViewSchedule: Bool = false
     @State private var navigateToNewTask: Bool = false
@@ -27,10 +26,10 @@ struct HomeView: View {
         startTime: Date()
     )
     
-    
+    @State private var path = NavigationPath()
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             ZStack {
                 VStack {
                     HStack {
@@ -53,10 +52,9 @@ struct HomeView: View {
                         Spacer()
                         Button(action: {
                             if scheduleExists {
-                                navigateToNewSchedule = false
                                 showingOptions = true
                             } else {
-                                navigateToNewSchedule = true
+                                path.append("newSchedule")
                             }
                         }) {
                             Image("plusCircle")
@@ -66,25 +64,43 @@ struct HomeView: View {
                                 .foregroundStyle(Color("blueAccent"))
                                 .shadow(radius: CGFloat(4))
                         }
-                        .navigationDestination(isPresented: $navigateToNewSchedule) {
-                            NewScheduleView(schedule: currentSchedule ?? Schedule(startTime: Date(), endTime: Date(), Tasks: []), scheduleExists: $scheduleExists) { newSchedule in
-                                currentSchedule = newSchedule
+                        .navigationDestination(for: String.self) {
+                            destination in
+                            
+                            if destination == "newSchedule" {
+                                NewScheduleView(
+                                    schedule: currentSchedule ?? Schedule(startTime: Date(), endTime: Date(), Tasks: []),
+                                    scheduleExists: $scheduleExists,
+                                    onSave: { newSchedule in
+                                        currentSchedule = newSchedule
+                                        path.append("preview")
+                                    }
+                                )
+                            } else if destination == "preview" {
+                                PreviewView(onConfirm: {
+                                    path.removeLast(path.count) // Return Home
+                                })
+                            } else if destination == "viewSchedule" {
+                                ViewScheduleView(
+                                    schedule: currentSchedule ?? Schedule(startTime: Date(), endTime: Date(), Tasks: []),
+                                    scheduleExists: $scheduleExists,
+                                    onSave: { updatedSchedule in
+                                        currentSchedule = updatedSchedule
+                                        path.removeLast(path.count)
+                                    }
+                                )
+                            } else if destination == "newTask" {
+                                NewTaskView(task: $task)
                             }
                         }
                         .confirmationDialog("Select Choice", isPresented: $showingOptions, titleVisibility: .visible) {
                             
                             Button("View Schedule") {
-                                navigateToViewSchedule = true
-                            }
-                            .navigationDestination(isPresented: $navigateToViewSchedule) {
-                                // ViewScheduleView() TODO: Uncomment once implemented
+                                path.append("viewSchedule")
                             }
                             
                             Button("New Task") {
-                                navigateToNewTask = true
-                            }
-                            .navigationDestination(isPresented: $navigateToNewTask) {
-                                NewTaskView(task: $task)
+                                path.append("newTask")
                             }
                         }
                     }
