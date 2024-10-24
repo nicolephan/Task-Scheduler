@@ -11,6 +11,8 @@ struct CalendarView<Content: View>: View {
     let heightPerHour = 60
     let lineHeight = 2 // Height of calendar lines
     
+    @State private var navigateToViewTask: Bool = false
+    
     var customOverlay: () -> Content // Accept any custom content
     
     var body: some View {
@@ -44,10 +46,53 @@ struct CalendarView<Content: View>: View {
                         Spacer()
                             .frame(width: 60)
                             .padding()
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(.blue)
-                            .frame(height: CGFloat(heightPerHour)) // height will change
-                            .offset(x: -10, y: 30) // y will change. y = -690 for 12 AM, y = 690 for 11 PM
+                        ZStack(alignment: .leading) {
+                            Button(action: {
+                                navigateToViewTask = true
+                            }) {
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(Color(UIColor(red: 192/255, green: 80/255, blue: 127/255, alpha: 1)))
+                                    .frame(height: CGFloat(heightPerHour)) // height will change
+                                    .offset(x: -10, y: 30) // y will change. y = -690 for 12 AM, y = 690 for 11 PM
+                            }
+                            .navigationDestination(isPresented: $navigateToViewTask) {
+                                ViewTaskView(task: Task(
+                                    title: "Fold Laundry",
+                                    exactStart: false,
+                                    taskDuration: 60,
+                                    priority: "Low",
+                                    addBreaks: false,
+                                    breaksEvery: 0,
+                                    breakDuration: 0,
+                                    description: "",
+                                    startTime: Date.now
+                                ))
+                            }
+                            
+                            VStack(alignment: .leading) {
+                                Text("Fold Laundry")
+                                    .frame(alignment: .leading)
+                                    .font(.custom("Manrope-Bold", size: 16))
+                                    .foregroundColor(.white)
+                                
+                                HStack {
+                                    Image(systemName: "clock")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .foregroundStyle(.white)
+                                        .opacity(0.7)
+                                        .frame(width: 13)
+                                    Text("12:00PM-1:00PM")
+                                        .frame(alignment: .leading)
+                                        .font(.custom("Manrope-Bold", size: 13))
+                                        .foregroundColor(.white)
+                                        .opacity(0.7)
+                                }
+                                .padding(.vertical, -12)
+                            }
+                            .padding(.top, 50)
+                            .padding(.horizontal, 10)
+                        }
                     }
                     
                     customOverlay() // Inject red marker in HomeView

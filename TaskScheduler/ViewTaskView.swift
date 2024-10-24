@@ -68,7 +68,8 @@ struct ViewTaskView: View {
                 }
                 
                 Spacer()
-                Text("View Task")
+                let action = isEditable ? "Edit" : "View"
+                Text("\(action) Schedule")
                     .font(.custom("Manrope-ExtraBold", size: 24))
                     .foregroundStyle(.text)
                 Spacer()
@@ -114,6 +115,7 @@ struct ViewTaskView: View {
             )
             Spacer()
         }
+        .navigationBarBackButtonHidden(true)
         .onAppear {
             self.editedTask = task
         }
