@@ -110,7 +110,7 @@ struct NewScheduleView: View {
                                         }
                                         .font(.custom("Manrope-ExtraBold", size: 28))
                                         .foregroundStyle(.white)
-                                        .padding(.leading, -20)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                                 
                                 VStack {
@@ -119,7 +119,7 @@ struct NewScheduleView: View {
                                         .resizable()
                                         .aspectRatio(contentMode: .fill)
                                         .frame(width: 24, height: 19)
-                                        .padding(.vertical, -32)
+                                        .padding(.vertical, -28)
                                 }
                                 
                                 VStack { // TO TIME
@@ -127,8 +127,6 @@ struct NewScheduleView: View {
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .font(.custom("Manrope-ExtraBold", size: 18))
                                         .foregroundStyle(Color.white.opacity(0.5))
-                                        .padding(.horizontal)
-                                        .padding(.bottom, -15)
                                     
                                     Text(formattedTime(localSchedule.endTime))
                                         .overlay {
@@ -144,8 +142,9 @@ struct NewScheduleView: View {
                                         }
                                         .font(.custom("Manrope-ExtraBold", size: 28))
                                         .foregroundStyle(.white)
-                                        .padding(.leading, 10)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
                                 }
+                                .padding(.leading, 10)
                             }
                             .padding(30)
                             .foregroundColor(.white)
