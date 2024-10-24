@@ -56,7 +56,7 @@ struct ViewTaskView: View {
                 Button(action: {
                     dismiss()
                 }) {
-                    Image(systemName: "arrow.backward.circle.fill")
+                    Image("backButton")
                         .resizable()
                         .scaledToFit()
                         .frame(maxWidth: 40)
@@ -65,7 +65,8 @@ struct ViewTaskView: View {
                 
                 Spacer()
                 Text("View Task")
-                    .font(.title2).bold()
+                    .font(.custom("Manrope-ExtraBold", size: 24))
+                    .foregroundStyle(.text)
                 Spacer()
                 
                 Button(action: {
@@ -79,10 +80,19 @@ struct ViewTaskView: View {
                         isEditable.toggle()
                     }
                 }){
-                    Image(systemName: isEditable ? "checkmark.circle.fill" : "pencil.circle.fill")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxWidth: 40)
+                    if isEditable {
+                        Image(systemName: "checkmark.circle.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxWidth: 40)
+                            .foregroundStyle(.blueAccent)
+                    } else {
+                        Image("editButton")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxWidth: 40)
+                            .foregroundStyle(.blueAccent)
+                    }
                 }
             }   //BUTTONS END
             .padding(20)
