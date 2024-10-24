@@ -297,8 +297,8 @@ struct TaskForm: View {
                 Text("Delete Task")
                     .frame(width: 100, height: 10)
                     .padding()
-                    .foregroundColor(task.priority == "High" ? Color.white : .text)
-                    .background(task.priority == "High" ? .redAccent : .card)
+                    .foregroundColor(.white)
+                    .background(.redAccent)
                     .cornerRadius(10)
                     .font(.custom("Manrope-Bold", size: 16))
             }
