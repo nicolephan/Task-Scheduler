@@ -291,18 +291,20 @@ struct TaskForm: View {
                 .foregroundStyle(.text)
                 .disabled(!isEditable)
             
-            Button(action: {
-                
-            }) {
-                Text("Delete Task")
-                    .frame(width: 100, height: 10)
-                    .padding()
-                    .foregroundColor(.white)
-                    .background(.redAccent)
-                    .cornerRadius(10)
-                    .font(.custom("Manrope-Bold", size: 16))
+            if (isEditable) {
+                Button(action: {
+                    
+                }) {
+                    Text("Delete Task")
+                        .frame(width: 100, height: 10)
+                        .padding()
+                        .foregroundColor(.white)
+                        .background(.redAccent)
+                        .cornerRadius(10)
+                        .font(.custom("Manrope-Bold", size: 16))
+                }
+                .padding()
             }
-            .padding()
             
             Spacer()
         }
