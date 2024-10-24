@@ -195,7 +195,7 @@ struct NewScheduleView: View {
                                             .background(Color(red: 68/255, green: 115/255, blue: 207/255))
                                             .cornerRadius(10)
                                     }
-                                    .padding(.top, 10)
+                                    .padding(.top, 5)
                                     
                                     Spacer()
                                         .frame(width: 40)

@@ -157,11 +157,13 @@ struct ViewScheduleView: View {
                                 ForEach(localSchedule.Tasks.indices, id:\.self){index in
                                     HStack{
                                         TextField("", text: $localSchedule.Tasks[index].title)
-                                            .padding(10)
+                                            .padding(.horizontal, 10)
+                                            .padding(.vertical, 8)
                                             .background(RoundedRectangle(cornerRadius: 10)
                                                 .fill(Color.white))
                                             .frame(height: 44)
                                             .foregroundStyle(.text)
+                                            .font(.custom("Manrope-Bold", size: 18))
                                             .disabled(!isEditable)
                                         if isEditable{
                                             NavigationLink(destination: NewTaskView(task: $localSchedule.Tasks[index])) {
@@ -173,6 +175,7 @@ struct ViewScheduleView: View {
                                             }
                                         }
                                     }
+                                    .padding(.vertical, 3)
                                 }
                                 
                                 if isEditable{
@@ -191,7 +194,7 @@ struct ViewScheduleView: View {
                                                 .background(Color(red: 68/255, green: 115/255, blue: 207/255))
                                                 .cornerRadius(10)
                                         }
-                                        .padding(.top, 10)
+                                        .padding(.top, 5)
                                         
                                         Spacer()
                                             .frame(width: 40)
