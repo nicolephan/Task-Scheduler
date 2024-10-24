@@ -14,17 +14,18 @@ struct HomeView: View {
     @State private var redMarkerOffset: Int = -720 // 12 AM offset is y = -720. 11 PM offset is y = 660.
     
     @State private var currentSchedule: Schedule?
-    @State private var task = Task(
-        title: "",
-        exactStart: false,
-        taskDuration: 0,
-        priority: "Low",
-        addBreaks: false,
-        breaksEvery: 0,
-        breakDuration: 0,
-        description: "",
-        startTime: Date()
-    )
+    @State private var standAloneTasks: [Task] = []
+//    @State private var task = Task(
+//        title: "",
+//        exactStart: false,
+//        taskDuration: 0,
+//        priority: "Low",
+//        addBreaks: false,
+//        breaksEvery: 0,
+//        breakDuration: 0,
+//        description: "",
+//        startTime: Date()
+//    )
     
     @State private var path = NavigationPath()
     
@@ -90,7 +91,8 @@ struct HomeView: View {
                                     }
                                 )
                             } else if destination == "newTask" {
-                                NewTaskView(task: $task)
+                                let taskIndex = standAloneTasks.count - 1
+                                NewTaskView(task: $standAloneTasks[taskIndex])
                             }
                         }
                         .confirmationDialog("Select Choice", isPresented: $showingOptions, titleVisibility: .visible) {
@@ -100,6 +102,18 @@ struct HomeView: View {
                             }
                             
                             Button("New Task") {
+                                let newTask = Task(
+                                    title: "",
+                                    exactStart: false,
+                                    taskDuration: 0,
+                                    priority: "Low",
+                                    addBreaks: false,
+                                    breaksEvery: 0,
+                                    breakDuration: 0,
+                                    description: "",
+                                    startTime: Date()
+                                )
+                                standAloneTasks.append(newTask)
                                 path.append("newTask")
                             }
                         }

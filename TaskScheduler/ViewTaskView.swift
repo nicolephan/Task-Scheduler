@@ -54,7 +54,11 @@ struct ViewTaskView: View {
         ScrollView{
             HStack{     //BUTTONS
                 Button(action: {
-                    dismiss()
+                    if isEditable{
+                        isEditable.toggle()
+                    } else {
+                        dismiss()
+                    }
                 }) {
                     Image("backButton")
                         .resizable()
