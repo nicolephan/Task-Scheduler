@@ -26,8 +26,6 @@ struct TaskForm: View {
                 .padding(.horizontal)
                 .disabled(!isEditable)
             
-                // TODO: Add lighter text for placeholder
-            
             Divider()
                 .padding([.leading, .trailing])
             
@@ -37,7 +35,7 @@ struct TaskForm: View {
                 .font(.custom("Manrope-ExtraBold", size: 18))
                 .foregroundStyle(.text)
             
-            VStack{
+            VStack(spacing: 5) {
                 HStack{
                     Text("Set Exact Start Time")
                         .font(.custom("Manrope-Bold", size: 18))
@@ -50,7 +48,7 @@ struct TaskForm: View {
                 }
                 .padding()
                 
-                if task.exactStart{
+                if task.exactStart {
                     HStack{
                         Text("Start Time")
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -58,16 +56,21 @@ struct TaskForm: View {
                             .font(.custom("Manrope-Bold", size: 18))
                             .foregroundStyle(.text)
                             .padding(.leading, 5)
-                            .padding(.top, -10)
-                        DatePicker("", selection: $task.startTime, displayedComponents: .hourAndMinute)
-                            .labelsHidden()
-                            .padding(.trailing)
-                            .disabled(!isEditable)
-//                            .blendMode(.multiply) // TODO: Find the right blend mode to hide BG
+                        
+                        Text(formattedTime(task.startTime))
+                            .overlay {
+                                DatePicker("", selection: $task.startTime, displayedComponents: .hourAndMinute)
+                                    .labelsHidden()
+                                    .disabled(!isEditable)
+                                    .colorMultiply(.clear)
+                            }
+                            .font(.custom("Manrope-ExtraBold", size: 18))
+                            .foregroundStyle(.blueAccent)
+                            .padding(.horizontal)
                     }
                 }
                 
-                HStack(spacing: 1){
+                HStack(){
                     HStack {
                         Text("Duration")
                             .font(.custom("Manrope-Bold", size: 18))
@@ -108,7 +111,7 @@ struct TaskForm: View {
                         .font(.custom("Manrope-ExtraBold", size: 18))
                         .foregroundStyle(.blueAccent)
                 }
-                .padding([.bottom, .leading, .trailing])
+                .padding(task.exactStart ? [.all] : [.horizontal, .bottom])
                 
             }
             .background(Color(red:240/255, green:244/255, blue:246/255))
@@ -172,7 +175,7 @@ struct TaskForm: View {
                 .font(.custom("Manrope-ExtraBold", size: 18))
                 .foregroundStyle(.text)
             
-            VStack{
+            VStack(spacing: 20) {
                 HStack{
                     Text("Breaks")
                         .font(.custom("Manrope-Bold", size: 18))
@@ -224,6 +227,7 @@ struct TaskForm: View {
                             .font(.custom("Manrope-ExtraBold", size: 18))
                             .foregroundStyle(.blueAccent)
                     }
+                    
                     HStack() {
                         HStack {
                             Text("Duration")
@@ -264,7 +268,6 @@ struct TaskForm: View {
                             .font(.custom("Manrope-ExtraBold", size: 18))
                             .foregroundStyle(.blueAccent)
                     }
-                    
                 }
             }
             .padding()
@@ -289,6 +292,12 @@ struct TaskForm: View {
                 .disabled(!isEditable)
             Spacer()
         }
+    }
+    
+    func formattedTime(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
+        return formatter.string(from: date)
     }
     
     func validateTask() -> Bool{
