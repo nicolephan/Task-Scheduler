@@ -53,11 +53,20 @@ struct ViewScheduleView: View {
                             isEditable.toggle()
                         }
                     }){
-                        Image(systemName: isEditable ? "checkmark.circle.fill" : "pencil.circle.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxWidth: 40)
-                            .foregroundStyle(.blueAccent)
+                        if isEditable {
+                            Image(systemName: "checkmark.circle.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(maxWidth: 40)
+                                .foregroundStyle(.blueAccent)
+                        } else {
+                            Image("editButton")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(maxWidth: 40)
+                                .foregroundStyle(.blueAccent)
+                        }
+
                     }
                 }
                 .padding(.horizontal, 20)

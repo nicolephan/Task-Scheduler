@@ -178,6 +178,7 @@ struct NewScheduleView: View {
                                                 .foregroundColor(.white)
                                         }
                                     }
+                                    .padding(.vertical, 3)
                                 }
                                 
                                 HStack{
