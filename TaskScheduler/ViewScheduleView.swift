@@ -1,15 +1,15 @@
 //
-//  NewScheduleView.swift
+//  ViewScheduleView.swift
 //  TaskScheduler
 //
-
 import SwiftUI
 
-struct NewScheduleView: View {
+struct ViewScheduleView: View {
     
     @Environment(\.dismiss) var dismiss
     
     @State private var localSchedule: Schedule
+    @State private var isEditable = false
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
     
@@ -18,20 +18,7 @@ struct NewScheduleView: View {
     var onSave: (Schedule) -> Void
     
     init(schedule: Schedule, scheduleExists: Binding<Bool>, onSave: @escaping (Schedule) -> Void) {
-        var modifiedSchedule = schedule
-        let emptyTask = Task(
-            title: "",
-            exactStart: false,
-            taskDuration: 0,
-            priority: "Low",
-            addBreaks: false,
-            breaksEvery: 0,
-            breakDuration: 0,
-            description: "",
-            startTime: Date()
-        )
-        modifiedSchedule.Tasks.append(emptyTask)
-        self._localSchedule = State(initialValue: modifiedSchedule)
+        self._localSchedule = State(initialValue: schedule)
         self.onSave = onSave
         self._scheduleExists = scheduleExists
     }
@@ -42,45 +29,51 @@ struct NewScheduleView: View {
             VStack{
                 HStack{     //BUTTONS
                     Button(action: {
-                        dismiss()
+                        if isEditable{
+                            isEditable = false
+                        } else {
+                            dismiss()
+                        }
                     }) {
                         Image("backButton")
                             .resizable()
                             .scaledToFit()
                             .frame(maxWidth: 40)
                             .foregroundColor(.backButtonBG)
-                        
-                        
                     }
                     Spacer()
                     Button(action: {
-                        if validateForm() {
-                            scheduleExists = true
-                            onSave(localSchedule)
-                            dismiss()
+                        if isEditable{
+                            if validateForm(){
+                                isEditable.toggle()
+                            } else {
+                                showAlert = true
+                            }
+                        } else {
+                            isEditable.toggle()
                         }
                     }){
-                        Image(systemName: "checkmark.circle.fill")
+                        Image(systemName: isEditable ? "checkmark.circle.fill" : "pencil.circle.fill")
                             .resizable()
                             .scaledToFit()
                             .frame(maxWidth: 40)
                             .foregroundStyle(.blueAccent)
                     }
-                }   //BUTTONS END
+                }
                 .padding(.horizontal, 20)
                 .alert(isPresented: $showAlert) {
                     Alert(title: Text("Invalid Task"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
                 }
-                
-                Text("New Schedule")
+                let action = isEditable ? "Edit" : "View"
+                Text("\(action) Schedule")
                     .font(.custom("Manrope-ExtraBold", size: 32))
                     .foregroundStyle(.text)
+                
                 
                 ZStack(alignment: .bottom) {
                     Image("sky-boy")
                         .clipped()
                         .padding(.bottom, -60)
-                    
                     ScrollView{
                         VStack{
                             Text("Time range")
@@ -110,6 +103,7 @@ struct NewScheduleView: View {
                                                 }
                                             }
                                             .accentColor(.yellow)
+                                            .disabled(!isEditable)
                                     }
                                 }
                                 
@@ -142,6 +136,7 @@ struct NewScheduleView: View {
                                                 }
                                             }
                                             .accentColor(.yellow)
+                                            .disabled(!isEditable)
                                     }
                                 }
                             }
@@ -168,36 +163,40 @@ struct NewScheduleView: View {
                                                 .fill(Color.white))
                                             .frame(height: 44)
                                             .foregroundStyle(.text)
-                                        
-                                        NavigationLink(destination: NewTaskView(task: $localSchedule.Tasks[index])) {
-                                            Image("pencil")
-                                                .resizable()
-                                                .frame(width: 24, height: 24)
-                                                .padding(.leading, 10)
-                                                .foregroundColor(.white)
+                                            .disabled(!isEditable)
+                                        if isEditable{
+                                            NavigationLink(destination: NewTaskView(task: $localSchedule.Tasks[index])) {
+                                                Image("pencil")
+                                                    .resizable()
+                                                    .frame(width: 24, height: 24)
+                                                    .padding(.leading, 10)
+                                                    .foregroundColor(.white)
+                                            }
                                         }
                                     }
                                 }
                                 
-                                HStack{
-                                    Button(action: {
-                                        let newTask = Task(title: "", exactStart: false, taskDuration: 0, priority: "Low", addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "", startTime: Date())
+                                if isEditable{
+                                    HStack{
+                                        Button(action: {
+                                            let newTask = Task(title: "", exactStart: false, taskDuration: 0, priority: "Low", addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "", startTime: Date())
+                                            
+                                            localSchedule.Tasks.append(newTask)
+                                        }) {
+                                            Image("plus")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 30, height: 30)
+                                                .foregroundColor(.white)
+                                                .frame(maxWidth: .infinity, minHeight: 44)
+                                                .background(Color(red: 68/255, green: 115/255, blue: 207/255))
+                                                .cornerRadius(10)
+                                        }
+                                        .padding(.top, 10)
                                         
-                                        localSchedule.Tasks.append(newTask)
-                                    }) {
-                                        Image("plus")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 30, height: 30)
-                                            .foregroundColor(.white)
-                                            .frame(maxWidth: .infinity, minHeight: 44)
-                                            .background(Color(red: 68/255, green: 115/255, blue: 207/255))
-                                            .cornerRadius(10)
+                                        Spacer()
+                                            .frame(width: 40)
                                     }
-                                    .padding(.top, 10)
-                                    
-                                    Spacer()
-                                        .frame(width: 40)
                                 }
                                 
                             }
@@ -205,28 +204,28 @@ struct NewScheduleView: View {
                             .background(Color(red: 95/255, green: 149/255, blue: 231/255))
                             .cornerRadius(20)
                             .shadow(radius: 4, x: 0, y: 4)
+                            
+                            // INVISIBLE DATEPICKER FOR RESIZE
+                            DatePicker("", selection: $localSchedule.startTime, displayedComponents: .hourAndMinute)
+                                .background(
+                                    GeometryReader { geo in
+                                        Color.clear.onAppear{
+                                            datepickersize = geo.size
+                                        }
+                                    }
+                                )
+                                .allowsHitTesting(false)
+                                .fixedSize()
+                                .opacity(0)
+                            
+                            Spacer()
                         }
                         .padding()
-                        
-                        // INVISIBLE DATEPICKER FOR RESIZE
-                        DatePicker("", selection: $localSchedule.startTime, displayedComponents: .hourAndMinute)
-                            .background(
-                                GeometryReader { geo in
-                                    Color.clear.onAppear{
-                                        datepickersize = geo.size
-                                    }
-                                }
-                            )
-                            .allowsHitTesting(false)
-                            .fixedSize()
-                            .opacity(0)
-                        
-                        Spacer()
                     }
                 }
             }
+            .navigationBarBackButtonHidden(true)
         }
-        .navigationBarBackButtonHidden(true)
     }
     
     private func validateForm() -> Bool{
@@ -246,12 +245,19 @@ struct NewScheduleView: View {
     }
 }
 
-struct NewScheduleView_PreviewWrapper: View {
-    @State private var scheduleExists = false
+struct ViewScheduleView_PreviewWrapper: View {
+    @State private var scheduleExists = true
     
     var body: some View {
-        NewScheduleView(
-            schedule: Schedule(startTime: Date(), endTime: Date(), Tasks: []),
+        let sampleTasks = [
+            Task(title: "Task 1", exactStart: false, taskDuration: 60, priority: "Medium", addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "Description for Task 1", startTime: Date()),
+            Task(title: "Task 2", exactStart: false, taskDuration: 30, priority: "High", addBreaks: true, breaksEvery: 15, breakDuration: 5, description: "Description for Task 2", startTime: Date()),
+            Task(title: "Task 3", exactStart: false, taskDuration: 90, priority: "Low", addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "Description for Task 3", startTime: Date())
+        ]
+        let sampleSchedule = Schedule(startTime: Date(), endTime: Date().addingTimeInterval(3600), Tasks: sampleTasks)
+
+        ViewScheduleView(
+            schedule: sampleSchedule,
             scheduleExists: $scheduleExists,
             onSave: { _ in }
         )
@@ -259,6 +265,5 @@ struct NewScheduleView_PreviewWrapper: View {
 }
 
 #Preview {
-    NewScheduleView_PreviewWrapper()
+    ViewScheduleView_PreviewWrapper()
 }
-

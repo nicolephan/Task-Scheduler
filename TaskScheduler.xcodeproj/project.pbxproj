@@ -18,6 +18,7 @@
 		797AB3FB2CC97CF900EF81F2 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797AB3FA2CC97CF900EF81F2 /* CalendarView.swift */; };
 		797AB3FD2CC97F3400EF81F2 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797AB3FC2CC97F3400EF81F2 /* PreviewView.swift */; };
 		F4167FB52CC5A72100AFB28A /* ViewTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4167FB42CC5A72100AFB28A /* ViewTaskView.swift */; };
+		F43C3E722CC986A300BDB891 /* ViewScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F43C3E712CC986A300BDB891 /* ViewScheduleView.swift */; };
 		F48E4A1B2CC4624E00761167 /* NewTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F48E4A1A2CC4624E00761167 /* NewTaskView.swift */; };
 		F491571F2CC5FF52009C3D5E /* TaskForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = F491571E2CC5FF52009C3D5E /* TaskForm.swift */; };
 		F4DAE2762CB8A5090002AD3A /* NewScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DAE2752CB8A5090002AD3A /* NewScheduleView.swift */; };
@@ -37,6 +38,7 @@
 		797AB3FA2CC97CF900EF81F2 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		797AB3FC2CC97F3400EF81F2 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 		F4167FB42CC5A72100AFB28A /* ViewTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewTaskView.swift; sourceTree = "<group>"; };
+		F43C3E712CC986A300BDB891 /* ViewScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewScheduleView.swift; sourceTree = "<group>"; };
 		F48E4A1A2CC4624E00761167 /* NewTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTaskView.swift; sourceTree = "<group>"; };
 		F491571E2CC5FF52009C3D5E /* TaskForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskForm.swift; sourceTree = "<group>"; };
 		F4DAE2752CB8A5090002AD3A /* NewScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewScheduleView.swift; sourceTree = "<group>"; };
@@ -79,6 +81,7 @@
 				797AB3FC2CC97F3400EF81F2 /* PreviewView.swift */,
 				797AB3FA2CC97CF900EF81F2 /* CalendarView.swift */,
 				F4DAE2752CB8A5090002AD3A /* NewScheduleView.swift */,
+				F43C3E712CC986A300BDB891 /* ViewScheduleView.swift */,
 				79318B8F2CC8AA6400E6668B /* Manrope-VariableFont_wght.ttf */,
 				F48E4A1A2CC4624E00761167 /* NewTaskView.swift */,
 				F491571E2CC5FF52009C3D5E /* TaskForm.swift */,
@@ -178,6 +181,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F43C3E722CC986A300BDB891 /* ViewScheduleView.swift in Sources */,
 				797AB3FB2CC97CF900EF81F2 /* CalendarView.swift in Sources */,
 				F4DAE2762CB8A5090002AD3A /* NewScheduleView.swift in Sources */,
 				F48E4A1B2CC4624E00761167 /* NewTaskView.swift in Sources */,
