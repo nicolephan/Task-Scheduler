@@ -57,7 +57,6 @@ struct NewScheduleView: View {
                         if validateForm() {
                             scheduleExists = true
                             onSave(localSchedule)
-                            dismiss()
                         }
                     }){
                         Image(systemName: "checkmark.circle.fill")
