@@ -95,22 +95,22 @@ struct NewScheduleView: View {
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .font(.custom("Manrope-ExtraBold", size: 18))
                                         .foregroundStyle(Color.white.opacity(0.5))
-                                        .padding(.bottom, -15)
-                                        .padding(.horizontal, 15)
                                     
-                                    GeometryReader { geo in
-                                        DatePicker("", selection: $localSchedule.startTime, displayedComponents: .hourAndMinute)
-                                            .labelsHidden()
-                                            .colorScheme(.dark)
-                                            .blendMode(.lighten)
-                                            .scaleEffect(x: geo.size.width / datepickersize.width, y: geo.size.width / datepickersize.width, anchor: .topLeading)
-                                            .onChange(of: localSchedule.startTime) {
-                                                if localSchedule.startTime > localSchedule.endTime {
-                                                    localSchedule.endTime = localSchedule.startTime
+                                    Text(formattedTime(localSchedule.startTime))
+                                        .overlay {
+                                            DatePicker("", selection: $localSchedule.startTime, displayedComponents: .hourAndMinute)
+                                                .labelsHidden()
+                                                .scaleEffect(1.2)
+                                                .onChange(of: localSchedule.startTime) {
+                                                    if localSchedule.startTime > localSchedule.endTime {
+                                                        localSchedule.endTime = localSchedule.startTime
+                                                    }
                                                 }
-                                            }
-                                            .accentColor(.yellow)
-                                    }
+                                                .colorMultiply(.clear)
+                                        }
+                                        .font(.custom("Manrope-ExtraBold", size: 28))
+                                        .foregroundStyle(.white)
+                                        .padding(.leading, -20)
                                 }
                                 
                                 VStack {
@@ -130,19 +130,21 @@ struct NewScheduleView: View {
                                         .padding(.horizontal)
                                         .padding(.bottom, -15)
                                     
-                                    GeometryReader { geo in
-                                        DatePicker("", selection: $localSchedule.endTime, displayedComponents: .hourAndMinute)
-                                            .labelsHidden()
-                                            .colorScheme(.dark)
-                                            .blendMode(.lighten)
-                                            .scaleEffect(x: geo.size.width / datepickersize.width, y: geo.size.width / datepickersize.width, anchor: .topLeading)
-                                            .onChange(of: localSchedule.endTime) {
-                                                if localSchedule.endTime < localSchedule.startTime {
-                                                    localSchedule.startTime = localSchedule.endTime
+                                    Text(formattedTime(localSchedule.endTime))
+                                        .overlay {
+                                            DatePicker("", selection: $localSchedule.startTime, displayedComponents: .hourAndMinute)
+                                                .labelsHidden()
+                                                .scaleEffect(1.2)
+                                                .onChange(of: localSchedule.endTime) {
+                                                    if localSchedule.endTime < localSchedule.startTime {
+                                                        localSchedule.startTime = localSchedule.endTime
+                                                    }
                                                 }
-                                            }
-                                            .accentColor(.yellow)
-                                    }
+                                                .colorMultiply(.clear)
+                                        }
+                                        .font(.custom("Manrope-ExtraBold", size: 28))
+                                        .foregroundStyle(.white)
+                                        .padding(.leading, 10)
                                 }
                             }
                             .padding(30)
@@ -243,6 +245,12 @@ struct NewScheduleView: View {
             }
         }
         return true
+    }
+    
+    func formattedTime(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
+        return formatter.string(from: date)
     }
 }
 
