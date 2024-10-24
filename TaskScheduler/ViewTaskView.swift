@@ -51,7 +51,7 @@ struct ViewTaskView: View {
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
-        ScrollView{
+        VStack {
             HStack{     //BUTTONS
                 Button(action: {
                     if isEditable{
@@ -68,7 +68,8 @@ struct ViewTaskView: View {
                 }
                 
                 Spacer()
-                Text("View Task")
+                let action = isEditable ? "Edit" : "View"
+                Text("\(action) Task")
                     .font(.custom("Manrope-ExtraBold", size: 24))
                     .foregroundStyle(.text)
                 Spacer()
@@ -99,26 +100,29 @@ struct ViewTaskView: View {
                     }
                 }
             }   //BUTTONS END
-            .padding(20)
+            .padding([.horizontal, .bottom], 20)
             Spacer().frame(maxHeight: 15)
             
-            TaskForm(
-                task: $editedTask,
-                isEditable: isEditable,
-                taskHours: .constant(taskHour),
-                taskMins: .constant(taskMin),
-                breakDurationHours: .constant(breakHour),
-                breakDurationMins: .constant(breakMin),
-                breakFrequencyHours: .constant(BreaksEveryHour),
-                breakFrequencyMins: .constant(BreaksEveryMin)
-            )
-            Spacer()
-        }
-        .onAppear {
-            self.editedTask = task
-        }
-        .alert(isPresented: $showAlert) {
-            Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+            ScrollView{
+                TaskForm(
+                    task: $editedTask,
+                    isEditable: isEditable,
+                    taskHours: .constant(taskHour),
+                    taskMins: .constant(taskMin),
+                    breakDurationHours: .constant(breakHour),
+                    breakDurationMins: .constant(breakMin),
+                    breakFrequencyHours: .constant(BreaksEveryHour),
+                    breakFrequencyMins: .constant(BreaksEveryMin)
+                )
+                Spacer()
+            }
+            .navigationBarBackButtonHidden(true)
+            .onAppear {
+                self.editedTask = task
+            }
+            .alert(isPresented: $showAlert) {
+                Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+            }
         }
     }
     

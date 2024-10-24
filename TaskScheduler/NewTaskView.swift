@@ -27,7 +27,7 @@ struct NewTaskView: View {
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
-        ScrollView{
+        VStack {
             HStack{     //BUTTONS
                 Button(action: {
                     dismiss()
@@ -57,44 +57,46 @@ struct NewTaskView: View {
                         .foregroundStyle(.blueAccent)
                 }
             }   //BUTTONS END
-            .padding(20)
+            .padding([.horizontal, .bottom], 20)
             .onAppear {
-               let totalDuration = task.taskDuration
-               taskHours = String(totalDuration / 60)
-               taskMins = String(totalDuration % 60)
-               
-               if task.addBreaks {
-                   breakDurationHours = String(task.breakDuration / 60)
-                   breakDurationMins = String(task.breakDuration % 60)
-                   breakFrequencyHours = String(task.breaksEvery / 60)
-                   breakFrequencyMins = String(task.breaksEvery % 60)
-               }
-           }
+                let totalDuration = task.taskDuration
+                taskHours = String(totalDuration / 60)
+                taskMins = String(totalDuration % 60)
+                
+                if task.addBreaks {
+                    breakDurationHours = String(task.breakDuration / 60)
+                    breakDurationMins = String(task.breakDuration % 60)
+                    breakFrequencyHours = String(task.breaksEvery / 60)
+                    breakFrequencyMins = String(task.breaksEvery % 60)
+                }
+            }
             Spacer().frame(maxHeight: 15)
             
-            TaskForm(task: $localTask, isEditable: true, taskHours: $taskHours, taskMins: $taskMins, breakDurationHours: $breakDurationHours, breakDurationMins: $breakDurationMins, breakFrequencyHours: $breakFrequencyHours, breakFrequencyMins: $breakFrequencyMins,
-                onValidationError: {error in
+            ScrollView{
+                TaskForm(task: $localTask, isEditable: true, taskHours: $taskHours, taskMins: $taskMins, breakDurationHours: $breakDurationHours, breakDurationMins: $breakDurationMins, breakFrequencyHours: $breakFrequencyHours, breakFrequencyMins: $breakFrequencyMins,
+                         onValidationError: {error in
                     alertMessage = error
                     showAlert = true
                 }
-            )
-            .onAppear {
-               let totalDuration = task.taskDuration
-               taskHours = String(totalDuration / 60)
-               taskMins = String(totalDuration % 60)
-               
-               if task.addBreaks {
-                   breakDurationHours = String(task.breakDuration / 60)
-                   breakDurationMins = String(task.breakDuration % 60)
-                   breakFrequencyHours = String(task.breaksEvery / 60)
-                   breakFrequencyMins = String(task.breaksEvery % 60)
-               }
-           }
-            .padding(.horizontal, 8)
-        }
-        .navigationBarBackButtonHidden(true)
-        .alert(isPresented: $showAlert) {
-            Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+                )
+                .onAppear {
+                    let totalDuration = task.taskDuration
+                    taskHours = String(totalDuration / 60)
+                    taskMins = String(totalDuration % 60)
+                    
+                    if task.addBreaks {
+                        breakDurationHours = String(task.breakDuration / 60)
+                        breakDurationMins = String(task.breakDuration % 60)
+                        breakFrequencyHours = String(task.breaksEvery / 60)
+                        breakFrequencyMins = String(task.breaksEvery % 60)
+                    }
+                }
+                .padding(.horizontal, 8)
+            }
+            .navigationBarBackButtonHidden(true)
+            .alert(isPresented: $showAlert) {
+                Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+            }
         }
     }
     

@@ -34,7 +34,7 @@ struct HomeView: View {
             ZStack {
                 VStack {
                     HStack {
-                        Text("Sept 26, 2024") // TODO: Fix date
+                        Text(formattedCurrentDate())
                             .font(.custom("Manrope-ExtraBold", size: 32))
                             .foregroundStyle(.text)
                             .padding(25)
@@ -124,6 +124,12 @@ struct HomeView: View {
             }
         }
     } // view ends
+    
+    func formattedCurrentDate() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE MMM d"
+        return formatter.string(from: Date())
+    }
     
     func redMarkerView() -> some View {
         TimelineView(.animation(minimumInterval: 1.0)) { timeline in
