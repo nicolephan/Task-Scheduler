@@ -80,22 +80,27 @@ struct HomeView: View {
                                 PreviewView(onConfirm: {
                                     path.removeLast(path.count) // Return Home
                                 })
+                            } else if destination == "viewSchedule" {
+                                ViewScheduleView(
+                                    schedule: currentSchedule ?? Schedule(startTime: Date(), endTime: Date(), Tasks: []),
+                                    scheduleExists: $scheduleExists,
+                                    onSave: { updatedSchedule in
+                                        currentSchedule = updatedSchedule
+                                        path.removeLast(path.count)
+                                    }
+                                )
+                            } else if destination == "newTask" {
+                                NewTaskView(task: $task)
                             }
                         }
                         .confirmationDialog("Select Choice", isPresented: $showingOptions, titleVisibility: .visible) {
                             
                             Button("View Schedule") {
-                                navigateToViewSchedule = true
-                            }
-                            .navigationDestination(isPresented: $navigateToViewSchedule) {
-                                // ViewScheduleView() TODO: Uncomment once implemented
+                                path.append("viewSchedule")
                             }
                             
                             Button("New Task") {
-                                navigateToNewTask = true
-                            }
-                            .navigationDestination(isPresented: $navigateToNewTask) {
-                                NewTaskView(task: $task)
+                                path.append("newTask")
                             }
                         }
                     }
