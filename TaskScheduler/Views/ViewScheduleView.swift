@@ -2,6 +2,7 @@
 //  ViewScheduleView.swift
 //  TaskScheduler
 //
+
 import SwiftUI
 
 struct ViewScheduleView: View {
@@ -42,7 +43,7 @@ struct ViewScheduleView: View {
                     Spacer()
                     Button(action: {
                         if isEditable{
-                            if validateForm(){
+                            if validateTimeRange() && validateForm() {
                                 isEditable.toggle()
                             } else {
                                 showAlert = true
@@ -69,7 +70,7 @@ struct ViewScheduleView: View {
                 }
                 .padding(.horizontal, 20)
                 .alert(isPresented: $showAlert) {
-                    Alert(title: Text("Invalid Task"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+                    Alert(title: Text("Invalid Input"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
                 }
                 let action = isEditable ? "Edit" : "View"
                 Text("\(action) Schedule")
@@ -81,6 +82,7 @@ struct ViewScheduleView: View {
                     Image("sky-boy")
                         .clipped()
                         .padding(.bottom, -60)
+                    
                     ScrollView{
                         VStack{
                             Text("Time range")
@@ -98,15 +100,14 @@ struct ViewScheduleView: View {
                                     
                                     Text(formattedTime(localSchedule.startTime))
                                         .overlay {
-                                            DatePicker("", selection: $localSchedule.startTime, displayedComponents: .hourAndMinute)
-                                                .labelsHidden()
-                                                .scaleEffect(1.2)
-                                                .onChange(of: localSchedule.startTime) {
-                                                    if localSchedule.startTime > localSchedule.endTime {
-                                                        localSchedule.endTime = localSchedule.startTime
-                                                    }
-                                                }
-                                                .colorMultiply(.clear)
+                                            if isEditable {
+                                                DatePicker("", selection: $localSchedule.startTime, displayedComponents: .hourAndMinute)
+                                                    .labelsHidden()
+                                                    .scaleEffect(1.2)
+                                                    .colorMultiply(.clear)
+                                            } else {
+                                                EmptyView()
+                                            }
                                         }
                                         .font(.custom("Manrope-ExtraBold", size: 28))
                                         .foregroundStyle(.white)
@@ -131,21 +132,19 @@ struct ViewScheduleView: View {
                                     
                                     Text(formattedTime(localSchedule.endTime))
                                         .overlay {
-                                            DatePicker("", selection: $localSchedule.startTime, displayedComponents: .hourAndMinute)
-                                                .labelsHidden()
-                                                .scaleEffect(1.2)
-                                                .onChange(of: localSchedule.endTime) {
-                                                    if localSchedule.endTime < localSchedule.startTime {
-                                                        localSchedule.startTime = localSchedule.endTime
-                                                    }
-                                                }
-                                                .colorMultiply(.clear)
+                                            if isEditable {
+                                                DatePicker("", selection: $localSchedule.endTime, displayedComponents: .hourAndMinute)
+                                                    .labelsHidden()
+                                                    .scaleEffect(1.2)
+                                                    .colorMultiply(.clear)
+                                            } else {
+                                                EmptyView()
+                                            }
                                         }
                                         .font(.custom("Manrope-ExtraBold", size: 28))
                                         .foregroundStyle(.white)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                 }
-                                .padding(.leading, 10)
                             }
                             .padding(30)
                             .foregroundColor(.white)
@@ -211,6 +210,15 @@ struct ViewScheduleView: View {
                 }
             }
             .navigationBarBackButtonHidden(true)
+    }
+    
+    private func validateTimeRange() -> Bool {
+        if localSchedule.endTime < localSchedule.startTime {
+            alertMessage = "Start time cannot be later than the end time. Please adjust the times to continue."
+            showAlert = true
+            return false
+        }
+        return true
     }
     
     private func validateForm() -> Bool{
