@@ -100,19 +100,17 @@ struct NewScheduleView: View {
                                             DatePicker("", selection: $localSchedule.startTime, displayedComponents: .hourAndMinute)
                                                 .labelsHidden()
                                                 .scaleEffect(1.2)
-                                                .onChange(of: localSchedule.startTime) {
-                                                    if localSchedule.startTime > localSchedule.endTime {
-                                                        localSchedule.endTime = localSchedule.startTime
-                                                    }
+                                                .onAppear() {
+                                                    localSchedule.endTime = Calendar.current.date(byAdding: .hour, value: 1, to: localSchedule.startTime) ?? localSchedule.startTime
                                                 }
                                                 .colorMultiply(.clear)
                                         }
                                         .font(.custom("Manrope-ExtraBold", size: 28))
                                         .foregroundStyle(.white)
                                         .frame(maxWidth: .infinity, alignment: .leading)
-                                }
+                                } // FROM TIME
                                 
-                                VStack {
+                                VStack { // arrow
                                     Spacer()
                                     Image(systemName: "arrow.right")
                                         .resizable()
@@ -120,7 +118,7 @@ struct NewScheduleView: View {
                                         .frame(width: 24, height: 19)
                                         .padding(.vertical, -28)
                                         .padding(.trailing, 15)
-                                }
+                                } // arrow
                                 
                                 VStack { // TO TIME
                                     Text("To")
@@ -130,21 +128,16 @@ struct NewScheduleView: View {
                                     
                                     Text(formattedTime(localSchedule.endTime))
                                         .overlay {
-                                            DatePicker("", selection: $localSchedule.startTime, displayedComponents: .hourAndMinute)
+                                            DatePicker("", selection: $localSchedule.endTime, displayedComponents: .hourAndMinute)
                                                 .labelsHidden()
                                                 .scaleEffect(1.2)
-                                                .onChange(of: localSchedule.endTime) {
-                                                    if localSchedule.endTime < localSchedule.startTime {
-                                                        localSchedule.startTime = localSchedule.endTime
-                                                    }
-                                                }
                                                 .colorMultiply(.clear)
                                         }
                                         .font(.custom("Manrope-ExtraBold", size: 28))
                                         .foregroundStyle(.white)
                                         .frame(maxWidth: .infinity, alignment: .leading)
-                                }
-                                .padding(.leading, 10)
+                                } // TO TIME
+//                                .padding(.leading, 10) TODO: Delete if needed
                             }
                             .padding(30)
                             .foregroundColor(.white)
