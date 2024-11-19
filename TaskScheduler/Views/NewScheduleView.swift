@@ -19,6 +19,7 @@ struct NewScheduleView: View {
     
     init(schedule: Schedule, scheduleExists: Binding<Bool>, onSave: @escaping (Schedule) -> Void) {
         var modifiedSchedule = schedule
+        modifiedSchedule.endTime = Calendar.current.date(byAdding: .hour, value: 1, to: modifiedSchedule.startTime) ?? modifiedSchedule.startTime
         let emptyTask = Task(
             title: "",
             exactStart: false,
@@ -100,9 +101,6 @@ struct NewScheduleView: View {
                                             DatePicker("", selection: $localSchedule.startTime, displayedComponents: .hourAndMinute)
                                                 .labelsHidden()
                                                 .scaleEffect(1.2)
-                                                .onAppear() {
-                                                    localSchedule.endTime = Calendar.current.date(byAdding: .hour, value: 1, to: localSchedule.startTime) ?? localSchedule.startTime
-                                                }
                                                 .colorMultiply(.clear)
                                         }
                                         .font(.custom("Manrope-ExtraBold", size: 28))
