@@ -5,7 +5,7 @@
 
 import Foundation
 
-struct Schedule {
+struct Schedule: Hashable {
     var startTime: Date
     var endTime: Date
     var Tasks: [Task]

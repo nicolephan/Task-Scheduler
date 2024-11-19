@@ -9,15 +9,16 @@ struct NewScheduleView: View {
     
     @Environment(\.dismiss) var dismiss
     
+    @Binding var path: NavigationPath
+    
     @State private var localSchedule: Schedule
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
     
     @State var datepickersize: CGSize = .zero
     @Binding var scheduleExists: Bool
-    var onSave: (Schedule) -> Void
     
-    init(schedule: Schedule, scheduleExists: Binding<Bool>, onSave: @escaping (Schedule) -> Void) {
+    init(schedule: Schedule, scheduleExists: Binding<Bool>, path: Binding<NavigationPath>) {
         var modifiedSchedule = schedule
         modifiedSchedule.endTime = Calendar.current.date(byAdding: .hour, value: 1, to: modifiedSchedule.startTime) ?? modifiedSchedule.startTime
         let emptyTask = Task(
@@ -31,10 +32,12 @@ struct NewScheduleView: View {
             description: "",
             startTime: Date()
         )
-        modifiedSchedule.Tasks.append(emptyTask)
+        if modifiedSchedule.Tasks.isEmpty {
+            modifiedSchedule.Tasks.append(emptyTask)
+        }
         self._localSchedule = State(initialValue: modifiedSchedule)
-        self.onSave = onSave
         self._scheduleExists = scheduleExists
+        self._path = path
     }
     
     var body: some View {
@@ -56,8 +59,7 @@ struct NewScheduleView: View {
                     Spacer()
                     Button(action: {
                         if validateForm() {
-                            scheduleExists = true
-                            onSave(localSchedule)
+                            path.append(localSchedule) // Send schedule to Preview to be finalized
                         }
                     }){
                         Image(systemName: "checkmark.circle.fill")
@@ -252,7 +254,7 @@ struct NewScheduleView_PreviewWrapper: View {
         NewScheduleView(
             schedule: Schedule(startTime: Date(), endTime: Date(), Tasks: []),
             scheduleExists: $scheduleExists,
-            onSave: { _ in }
+            path: .constant(NavigationPath())
         )
     }
 }

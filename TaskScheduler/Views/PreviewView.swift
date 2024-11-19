@@ -9,7 +9,9 @@ struct PreviewView: View {
     
     @Environment(\.dismiss) var dismiss
     
-    var onConfirm: () -> Void
+    var schedule: Schedule
+    @Binding var scheduleExists: Bool
+    var onSave: (Schedule) -> Void
     
     var body: some View {
         VStack {
@@ -30,11 +32,11 @@ struct PreviewView: View {
                     .foregroundStyle(.text)
                 Spacer()
                 
-                Button(action: {
+                Button(action: {                    
                     // TODO: Add task to calendar
                     
-                    
-                    onConfirm()
+                    scheduleExists = true
+                    onSave(schedule)
                 }){
                     Image(systemName: "checkmark.circle.fill")
                         .resizable()
@@ -56,5 +58,5 @@ struct PreviewView: View {
 }
 
 #Preview {
-    PreviewView(onConfirm: {})
+    PreviewView(schedule: Schedule(startTime: Date(), endTime: Date(), Tasks: []), scheduleExists: .constant(false), onSave: {_ in })
 }

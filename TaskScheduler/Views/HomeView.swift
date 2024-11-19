@@ -72,16 +72,22 @@ struct HomeView: View {
                                 NewScheduleView(
                                     schedule: currentSchedule ?? Schedule(startTime: Date(), endTime: Date(), Tasks: []),
                                     scheduleExists: $scheduleExists,
-                                    onSave: { newSchedule in
-                                        currentSchedule = newSchedule
-                                        path.append("preview")
-                                    }
+                                    path: $path
                                 )
-                            } else if destination == "preview" {
-                                PreviewView(onConfirm: {
-                                    path.removeLast(path.count) // Return Home
-                                })
-                            } else if destination == "viewSchedule" {
+                            }
+//                            else if destination == "preview" {
+//                                if let scheduleToPreview = currentSchedule {
+//                                    PreviewView(
+//                                        schedule: scheduleToPreview,
+//                                        scheduleExists: $scheduleExists,
+//                                        onSave: { finalizedSchedule in
+//                                            currentSchedule = finalizedSchedule
+//                                            path.removeLast(path.count) // Return Home
+//                                        }
+//                                    )
+//                                }
+//                            }
+                            else if destination == "viewSchedule" {
                                 ViewScheduleView(
                                     schedule: currentSchedule ?? Schedule(startTime: Date(), endTime: Date(), Tasks: []),
                                     scheduleExists: $scheduleExists,
@@ -94,6 +100,18 @@ struct HomeView: View {
                                 let taskIndex = standAloneTasks.count - 1
                                 NewTaskView(task: $standAloneTasks[taskIndex])
                             }
+                        }
+                        .navigationDestination(for: Schedule.self) { // Send schedule to Preview to be finalized
+                            schedule in
+                            
+                            PreviewView(
+                                schedule: schedule,
+                                scheduleExists: $scheduleExists,
+                                onSave: { finalizedSchedule in
+                                    currentSchedule = finalizedSchedule
+                                    path.removeLast(path.count) // Return Home
+                                }
+                            )
                         }
                         .confirmationDialog("Select Choice", isPresented: $showingOptions, titleVisibility: .visible) {
                             
