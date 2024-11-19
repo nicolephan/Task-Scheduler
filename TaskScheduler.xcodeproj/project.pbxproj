@@ -3,46 +3,32 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		792854582CAF7BDE00173C27 /* TaskSchedulerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792854572CAF7BDE00173C27 /* TaskSchedulerApp.swift */; };
-		7928545A2CAF7BDE00173C27 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792854592CAF7BDE00173C27 /* ContentView.swift */; };
 		7928545C2CAF7BDF00173C27 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7928545B2CAF7BDF00173C27 /* Assets.xcassets */; };
 		7928545F2CAF7BDF00173C27 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7928545E2CAF7BDF00173C27 /* Preview Assets.xcassets */; };
-		7931890A2CB772C200E6668B /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793189092CB772C200E6668B /* HomeView.swift */; };
 		7931891B2CB77B0800E6668B /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7931891A2CB77B0800E6668B /* Task.swift */; };
 		7931891D2CB77B4B00E6668B /* Schedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7931891C2CB77B4B00E6668B /* Schedule.swift */; };
 		79318B902CC8AA6400E6668B /* Manrope-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 79318B8F2CC8AA6400E6668B /* Manrope-VariableFont_wght.ttf */; };
-		797AB3FB2CC97CF900EF81F2 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797AB3FA2CC97CF900EF81F2 /* CalendarView.swift */; };
-		797AB3FD2CC97F3400EF81F2 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797AB3FC2CC97F3400EF81F2 /* PreviewView.swift */; };
-		F4167FB52CC5A72100AFB28A /* ViewTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4167FB42CC5A72100AFB28A /* ViewTaskView.swift */; };
-		F43C3E722CC986A300BDB891 /* ViewScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F43C3E712CC986A300BDB891 /* ViewScheduleView.swift */; };
-		F48E4A1B2CC4624E00761167 /* NewTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F48E4A1A2CC4624E00761167 /* NewTaskView.swift */; };
-		F491571F2CC5FF52009C3D5E /* TaskForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = F491571E2CC5FF52009C3D5E /* TaskForm.swift */; };
-		F4DAE2762CB8A5090002AD3A /* NewScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DAE2752CB8A5090002AD3A /* NewScheduleView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		792854542CAF7BDE00173C27 /* TaskScheduler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TaskScheduler.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		792854572CAF7BDE00173C27 /* TaskSchedulerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSchedulerApp.swift; sourceTree = "<group>"; };
-		792854592CAF7BDE00173C27 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7928545B2CAF7BDF00173C27 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7928545E2CAF7BDF00173C27 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		793189092CB772C200E6668B /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		7931891A2CB77B0800E6668B /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
 		7931891C2CB77B4B00E6668B /* Schedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Schedule.swift; sourceTree = "<group>"; };
 		79318B8F2CC8AA6400E6668B /* Manrope-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Manrope-VariableFont_wght.ttf"; sourceTree = "<group>"; };
 		79318B912CC8AAC600E6668B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		797AB3FA2CC97CF900EF81F2 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
-		797AB3FC2CC97F3400EF81F2 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
-		F4167FB42CC5A72100AFB28A /* ViewTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewTaskView.swift; sourceTree = "<group>"; };
-		F43C3E712CC986A300BDB891 /* ViewScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewScheduleView.swift; sourceTree = "<group>"; };
-		F48E4A1A2CC4624E00761167 /* NewTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTaskView.swift; sourceTree = "<group>"; };
-		F491571E2CC5FF52009C3D5E /* TaskForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskForm.swift; sourceTree = "<group>"; };
-		F4DAE2752CB8A5090002AD3A /* NewScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewScheduleView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		79621D032CEC0EAD0077258D /* Views */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Views; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		792854512CAF7BDE00173C27 /* Frameworks */ = {
@@ -76,17 +62,9 @@
 			children = (
 				79318B912CC8AAC600E6668B /* Info.plist */,
 				792854572CAF7BDE00173C27 /* TaskSchedulerApp.swift */,
-				792854592CAF7BDE00173C27 /* ContentView.swift */,
-				793189092CB772C200E6668B /* HomeView.swift */,
-				797AB3FC2CC97F3400EF81F2 /* PreviewView.swift */,
-				797AB3FA2CC97CF900EF81F2 /* CalendarView.swift */,
-				F4DAE2752CB8A5090002AD3A /* NewScheduleView.swift */,
-				F43C3E712CC986A300BDB891 /* ViewScheduleView.swift */,
-				79318B8F2CC8AA6400E6668B /* Manrope-VariableFont_wght.ttf */,
-				F48E4A1A2CC4624E00761167 /* NewTaskView.swift */,
-				F491571E2CC5FF52009C3D5E /* TaskForm.swift */,
-				F4167FB42CC5A72100AFB28A /* ViewTaskView.swift */,
+				79621D032CEC0EAD0077258D /* Views */,
 				7931891E2CB77B9600E6668B /* Models */,
+				79318B8F2CC8AA6400E6668B /* Manrope-VariableFont_wght.ttf */,
 				7928545B2CAF7BDF00173C27 /* Assets.xcassets */,
 				7928545D2CAF7BDF00173C27 /* Preview Content */,
 			);
@@ -124,6 +102,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				79621D032CEC0EAD0077258D /* Views */,
 			);
 			name = TaskScheduler;
 			productName = TaskScheduler;
@@ -181,17 +162,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F43C3E722CC986A300BDB891 /* ViewScheduleView.swift in Sources */,
-				797AB3FB2CC97CF900EF81F2 /* CalendarView.swift in Sources */,
-				F4DAE2762CB8A5090002AD3A /* NewScheduleView.swift in Sources */,
-				F48E4A1B2CC4624E00761167 /* NewTaskView.swift in Sources */,
-				797AB3FD2CC97F3400EF81F2 /* PreviewView.swift in Sources */,
 				7931891B2CB77B0800E6668B /* Task.swift in Sources */,
-				7931890A2CB772C200E6668B /* HomeView.swift in Sources */,
-				7928545A2CAF7BDE00173C27 /* ContentView.swift in Sources */,
-				F491571F2CC5FF52009C3D5E /* TaskForm.swift in Sources */,
 				7931891D2CB77B4B00E6668B /* Schedule.swift in Sources */,
-				F4167FB52CC5A72100AFB28A /* ViewTaskView.swift in Sources */,
 				792854582CAF7BDE00173C27 /* TaskSchedulerApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

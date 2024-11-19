@@ -5,7 +5,7 @@
 
 import Foundation
 
-struct Task {
+struct Task: Hashable {
     var title: String
     var exactStart: Bool
     var taskDuration: Int // in minutes
