@@ -42,7 +42,6 @@ struct NewScheduleView: View {
     
     var body: some View {
         NavigationView{
-            
             VStack{
                 HStack{     //BUTTONS
                     Button(action: {
@@ -53,12 +52,10 @@ struct NewScheduleView: View {
                             .scaledToFit()
                             .frame(maxWidth: 40)
                             .foregroundColor(.backButtonBG)
-                        
-                        
                     }
                     Spacer()
                     Button(action: {
-                        if validateForm() {
+                        if validateTimeRange() && validateForm() {
                             path.append(localSchedule) // Send schedule to Preview to be finalized
                         }
                     }){
@@ -71,7 +68,7 @@ struct NewScheduleView: View {
                 }   //BUTTONS END
                 .padding(.horizontal, 20)
                 .alert(isPresented: $showAlert) {
-                    Alert(title: Text("Invalid Task"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+                    Alert(title: Text("Invalid Input"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
                 }
                 
                 Text("New Schedule")
@@ -137,7 +134,6 @@ struct NewScheduleView: View {
                                         .foregroundStyle(.white)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                 } // TO TIME
-//                                .padding(.leading, 10) TODO: Delete if needed
                             }
                             .padding(30)
                             .foregroundColor(.white)
@@ -224,15 +220,24 @@ struct NewScheduleView: View {
         .navigationBarBackButtonHidden(true)
     }
     
+    private func validateTimeRange() -> Bool {
+        if localSchedule.endTime < localSchedule.startTime {
+            alertMessage = "Start time cannot be later than the end time. Please adjust the times to continue."
+            showAlert = true
+            return false
+        }
+        return true
+    }
+    
     private func validateForm() -> Bool{
         for(index, task) in localSchedule.Tasks.enumerated(){
             if task.title == "" {
-                alertMessage = "Mandatory Information for task \(index + 1) is not present"
+                alertMessage = "Required information for task \(index + 1) is not present"
                 showAlert = true
                 return false
             }
             if task.taskDuration == 0 || (task.addBreaks && task.breaksEvery == 0) || (task.addBreaks && task.breakDuration == 0){
-                alertMessage = "Mandatory Information for task \"\(task.title)\" is not present"
+                alertMessage = "Required information for task \"\(task.title)\" is not present"
                 showAlert = true
                 return false
             }

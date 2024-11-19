@@ -75,18 +75,6 @@ struct HomeView: View {
                                     path: $path
                                 )
                             }
-//                            else if destination == "preview" {
-//                                if let scheduleToPreview = currentSchedule {
-//                                    PreviewView(
-//                                        schedule: scheduleToPreview,
-//                                        scheduleExists: $scheduleExists,
-//                                        onSave: { finalizedSchedule in
-//                                            currentSchedule = finalizedSchedule
-//                                            path.removeLast(path.count) // Return Home
-//                                        }
-//                                    )
-//                                }
-//                            }
                             else if destination == "viewSchedule" {
                                 ViewScheduleView(
                                     schedule: currentSchedule ?? Schedule(startTime: Date(), endTime: Date(), Tasks: []),
