@@ -10,6 +10,9 @@ struct CalendarView<Content: View>: View {
     let hours = Array(0...23)
     let heightPerHour = 60
     let lineHeight = 2 // Height of calendar lines
+//    let schedule: Schedule
+    
+    @ObservedObject var taskManager: TaskManager
     
     @State private var navigateToViewTask: Bool = false
     
@@ -41,59 +44,64 @@ struct CalendarView<Content: View>: View {
                     }
                     .padding()
                     
-                    
-                    HStack { // TODO: Example task block
-                        Spacer()
-                            .frame(width: 60)
-                            .padding()
-                        ZStack(alignment: .leading) {
-                            Button(action: {
-                                navigateToViewTask = true
-                            }) {
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(Color(UIColor(red: 192/255, green: 80/255, blue: 127/255, alpha: 1)))
-                                    .frame(height: CGFloat(heightPerHour)) // height will change
-                                    .offset(x: -10, y: 30) // y will change. y = -690 for 12 AM, y = 690 for 11 PM
-                            }
-                            .navigationDestination(isPresented: $navigateToViewTask) {
-                                ViewTaskView(task: Task(
-                                    title: "Fold Laundry",
-                                    exactStart: false,
-                                    taskDuration: 60,
-                                    priority: "Low",
-                                    addBreaks: false,
-                                    breaksEvery: 0,
-                                    breakDuration: 0,
-                                    description: "",
-                                    startTime: Date.now
-                                ))
-                            }
-                            
-                            VStack(alignment: .leading) {
-                                Text("Fold Laundry")
-                                    .frame(alignment: .leading)
-                                    .font(.custom("Manrope-Bold", size: 16))
-                                    .foregroundColor(.white)
-                                
-                                HStack {
-                                    Image(systemName: "clock")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .foregroundStyle(.white)
-                                        .opacity(0.7)
-                                        .frame(width: 13)
-                                    Text("12:00PM-1:00PM")
-                                        .frame(alignment: .leading)
-                                        .font(.custom("Manrope-Bold", size: 13))
-                                        .foregroundColor(.white)
-                                        .opacity(0.7)
-                                }
-                                .padding(.vertical, -12)
-                            }
-                            .padding(.top, 50)
-                            .padding(.horizontal, 10)
-                        }
+                    ForEach(taskManager.schedule.Tasks, id: \.self) {
+                        task in
+                        placeTask(task: task)
                     }
+                    
+                    
+//                    HStack { // TODO: Example task block
+//                        Spacer()
+//                            .frame(width: 60)
+//                            .padding()
+//                        ZStack(alignment: .leading) {
+//                            Button(action: {
+//                                navigateToViewTask = true
+//                            }) {
+//                                RoundedRectangle(cornerRadius: 16)
+//                                    .fill(Color(UIColor(red: 192/255, green: 80/255, blue: 127/255, alpha: 1)))
+//                                    .frame(height: CGFloat(heightPerHour)) // height will change
+//                                    .offset(x: -10, y: 30) // y will change. y = -690 for 12 AM, y = 690 for 11 PM
+//                            }
+//                            .navigationDestination(isPresented: $navigateToViewTask) {
+//                                ViewTaskView(task: Task(
+//                                    title: "Fold Laundry",
+//                                    exactStart: false,
+//                                    taskDuration: 60,
+//                                    priority: "Low",
+//                                    addBreaks: false,
+//                                    breaksEvery: 0,
+//                                    breakDuration: 0,
+//                                    description: "",
+//                                    startTime: Date.now
+//                                ))
+//                            }
+//                            
+//                            VStack(alignment: .leading) {
+//                                Text("Fold Laundry")
+//                                    .frame(alignment: .leading)
+//                                    .font(.custom("Manrope-Bold", size: 16))
+//                                    .foregroundColor(.white)
+//                                
+//                                HStack {
+//                                    Image(systemName: "clock")
+//                                        .resizable()
+//                                        .aspectRatio(contentMode: .fit)
+//                                        .foregroundStyle(.white)
+//                                        .opacity(0.7)
+//                                        .frame(width: 13)
+//                                    Text("12:00PM-1:00PM")
+//                                        .frame(alignment: .leading)
+//                                        .font(.custom("Manrope-Bold", size: 13))
+//                                        .foregroundColor(.white)
+//                                        .opacity(0.7)
+//                                }
+//                                .padding(.vertical, -12)
+//                            }
+//                            .padding(.top, 50)
+//                            .padding(.horizontal, 10)
+//                        }
+//                    } // TODO: Example task block
                     
                     customOverlay() // Inject red marker in HomeView
                 }
@@ -116,10 +124,75 @@ struct CalendarView<Content: View>: View {
         
         return formatter.string(from: date)
     }
+    
+    func placeTask(task: Task) -> some View {
+        HStack {
+            Spacer()
+                .frame(width: 60)
+                .padding()
+            ZStack(alignment: .leading) {
+                Button(action: {
+                    navigateToViewTask = true
+                }) {
+                    RoundedRectangle(cornerRadius: CGFloat(16 * task.taskDuration / heightPerHour))
+                        .fill(Color(UIColor(red: 192/255, green: 80/255, blue: 127/255, alpha: 1)))
+                        .frame(height: CGFloat(task.taskDuration)) // height will change
+                        .offset(x: -10, y: calculatePosition(for: task.startTime) - 690) // y will change. y = -690 for 12 AM, y = 690 for 11 PM
+                }
+//                .navigationDestination(isPresented: $navigateToViewTask) {
+//                    ViewTaskView(task: Task(
+//                        title: "Fold Laundry",
+//                        exactStart: false,
+//                        taskDuration: 60,
+//                        priority: "Low",
+//                        addBreaks: false,
+//                        breaksEvery: 0,
+//                        breakDuration: 0,
+//                        description: "",
+//                        startTime: Date.now
+//                    ))
+//                }
+                
+                VStack(alignment: .leading) {
+                    Text(task.title.isEmpty ? "No Title" : task.title)
+                        .frame(alignment: .leading)
+                        .font(.custom("Manrope-Bold", size: 16))
+                        .foregroundColor(.white)
+                    
+                    HStack {
+                        Image(systemName: "clock")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .foregroundStyle(.white)
+                            .opacity(0.7)
+                            .frame(width: 13)
+                        Text("12:00PM-1:00PM")
+                            .frame(alignment: .leading)
+                            .font(.custom("Manrope-Bold", size: 13))
+                            .foregroundColor(.white)
+                            .opacity(0.7)
+                    }
+                    .padding(.vertical, -12)
+                }
+                .padding(.top, 50)
+                .padding(.horizontal, 10)
+            }
+        }
+    }
+    
+    func calculatePosition(for date: Date) -> CGFloat {
+        let components = Calendar.current.dateComponents([.hour, .minute], from: date)
+        let hour = components.hour ?? 0
+        let minute = components.minute ?? 0
+
+        let totalMinutes = (hour * 60) + minute
+        
+        return CGFloat(totalMinutes)
+    }
 }
 
 #Preview {
-    CalendarView {
+    CalendarView(taskManager: TaskManager()) {
         EmptyView()
     }
 }

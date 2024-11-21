@@ -13,7 +13,7 @@ struct HomeView: View {
     @State private var navigateToNewTask: Bool = false
     @State private var redMarkerOffset: Int = -720 // 12 AM offset is y = -720. 11 PM offset is y = 660.
     
-    @State private var currentSchedule: Schedule?
+//    @State private var currentSchedule: Schedule? TODO: Delete
     @State private var standAloneTasks: [Task] = []
 //    @State private var task = Task(
 //        title: "",
@@ -29,6 +29,8 @@ struct HomeView: View {
     
     @State private var path = NavigationPath()
     
+    @StateObject var taskManager = TaskManager()
+    
     var body: some View {
         NavigationStack(path: $path) {
             ZStack {
@@ -42,7 +44,7 @@ struct HomeView: View {
                         Spacer()
                     }
                     
-                    CalendarView {
+                    CalendarView(taskManager: taskManager) {
                         redMarkerView()
                     }
                 }
@@ -70,17 +72,17 @@ struct HomeView: View {
                             
                             if destination == "newSchedule" {
                                 NewScheduleView(
-                                    schedule: currentSchedule ?? Schedule(startTime: Date(), endTime: Date(), Tasks: []),
+                                    taskManager: taskManager,
                                     scheduleExists: $scheduleExists,
                                     path: $path
                                 )
                             }
                             else if destination == "viewSchedule" {
                                 ViewScheduleView(
-                                    schedule: currentSchedule ?? Schedule(startTime: Date(), endTime: Date(), Tasks: []),
+                                    schedule: taskManager.schedule,
                                     scheduleExists: $scheduleExists,
                                     onSave: { updatedSchedule in
-                                        currentSchedule = updatedSchedule
+                                        taskManager.schedule = updatedSchedule
                                         path.removeLast(path.count)
                                     }
                                 )
@@ -93,10 +95,10 @@ struct HomeView: View {
                             schedule in
                             
                             PreviewView(
-                                schedule: schedule,
+                                taskManager: taskManager,
                                 scheduleExists: $scheduleExists,
                                 onSave: { finalizedSchedule in
-                                    currentSchedule = finalizedSchedule
+                                    taskManager.schedule = finalizedSchedule
                                     path.removeLast(path.count) // Return Home
                                 }
                             )

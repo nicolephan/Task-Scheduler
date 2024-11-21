@@ -11,15 +11,21 @@ struct NewScheduleView: View {
     
     @Binding var path: NavigationPath
     
+    @ObservedObject var taskManager: TaskManager
+    
     @State private var localSchedule: Schedule
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
-    
     @State var datepickersize: CGSize = .zero
     @Binding var scheduleExists: Bool
     
-    init(schedule: Schedule, scheduleExists: Binding<Bool>, path: Binding<NavigationPath>) {
-        var modifiedSchedule = schedule
+    init(taskManager: TaskManager, scheduleExists: Binding<Bool>, path: Binding<NavigationPath>) {
+        self.taskManager = taskManager
+        self._scheduleExists = scheduleExists
+        self._path = path
+        
+        let scheduleCopy = taskManager.schedule
+        var modifiedSchedule = scheduleCopy
         modifiedSchedule.endTime = Calendar.current.date(byAdding: .hour, value: 1, to: modifiedSchedule.startTime) ?? modifiedSchedule.startTime
         let emptyTask = Task(
             title: "",
@@ -30,14 +36,13 @@ struct NewScheduleView: View {
             breaksEvery: 0,
             breakDuration: 0,
             description: "",
-            startTime: Date()
+            startTime: modifiedSchedule.startTime
         )
         if modifiedSchedule.Tasks.isEmpty {
             modifiedSchedule.Tasks.append(emptyTask)
         }
+        
         self._localSchedule = State(initialValue: modifiedSchedule)
-        self._scheduleExists = scheduleExists
-        self._path = path
     }
     
     var body: some View {
@@ -56,6 +61,7 @@ struct NewScheduleView: View {
                     Spacer()
                     Button(action: {
                         if validateTimeRange() && validateForm() {
+                            taskManager.schedule = localSchedule
                             path.append(localSchedule) // Send schedule to Preview to be finalized
                         }
                     }){
@@ -257,7 +263,7 @@ struct NewScheduleView_PreviewWrapper: View {
     
     var body: some View {
         NewScheduleView(
-            schedule: Schedule(startTime: Date(), endTime: Date(), Tasks: []),
+            taskManager: TaskManager(),
             scheduleExists: $scheduleExists,
             path: .constant(NavigationPath())
         )

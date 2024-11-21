@@ -9,7 +9,8 @@ struct PreviewView: View {
     
     @Environment(\.dismiss) var dismiss
     
-    var schedule: Schedule
+    @ObservedObject var taskManager: TaskManager
+//    var schedule: Schedule TODO: Delete
     @Binding var scheduleExists: Bool
     var onSave: (Schedule) -> Void
     
@@ -32,11 +33,9 @@ struct PreviewView: View {
                     .foregroundStyle(.text)
                 Spacer()
                 
-                Button(action: {                    
-                    // TODO: Add task to calendar
-                    
+                Button(action: {
                     scheduleExists = true
-                    onSave(schedule)
+                    onSave(taskManager.schedule)
                 }){
                     Image(systemName: "checkmark.circle.fill")
                         .resizable()
@@ -50,7 +49,7 @@ struct PreviewView: View {
             
             Spacer()
             
-            CalendarView {
+            CalendarView(taskManager: taskManager) {
                 EmptyView()
             }
         }
@@ -58,5 +57,5 @@ struct PreviewView: View {
 }
 
 #Preview {
-    PreviewView(schedule: Schedule(startTime: Date(), endTime: Date(), Tasks: []), scheduleExists: .constant(false), onSave: {_ in })
+    PreviewView(taskManager: TaskManager(), scheduleExists: .constant(false), onSave: {_ in })
 }
