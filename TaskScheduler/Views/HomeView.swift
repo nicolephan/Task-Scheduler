@@ -44,7 +44,7 @@ struct HomeView: View {
                         Spacer()
                     }
                     
-                    CalendarView(taskManager: taskManager) {
+                    CalendarView(isInteractive: true, taskManager: taskManager) {
                         redMarkerView()
                     }
                 }
@@ -169,8 +169,6 @@ struct HomeView: View {
         return CGFloat(totalMinutes + redMarkerOffset)
     }
 }
-    
-    
 
 #Preview {
     HomeView()

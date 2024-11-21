@@ -10,7 +10,7 @@ struct CalendarView<Content: View>: View {
     let hours = Array(0...23)
     let heightPerHour = 60
     let lineHeight = 2 // Height of calendar lines
-//    let schedule: Schedule
+    var isInteractive: Bool
     
     @ObservedObject var taskManager: TaskManager
     
@@ -135,57 +135,65 @@ struct CalendarView<Content: View>: View {
                 .frame(width: 60)
                 .padding()
 
-            Button(action: {
-                navigateToViewTask = true
-            }) {
-                ZStack(alignment: .topLeading) {
-                    RoundedRectangle(cornerRadius: min(CGFloat(task.taskDuration) / 4, 16))
-                        .fill(Color(UIColor(red: 192/255, green: 80/255, blue: 127/255, alpha: 1)))
-                        .frame(height: CGFloat(task.taskDuration)) // height will change
-                    
-                    VStack(alignment: .leading) {
-                        Text(task.title)
-                            .frame(alignment: .leading)
-                            .font(.custom("Manrope-Bold", size: isTinyTask ? CGFloat(task.taskDuration) / 2.5 : 16))
-                            .foregroundColor(.white)
-                        
-                        if !isShortTask {
-                            HStack {
-                                Image(systemName: "clock")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .foregroundStyle(.white)
-                                    .opacity(0.7)
-                                    .frame(width: 13)
-                                Text("\(formattedTimeRange(for: task))")
-                                    .frame(alignment: .leading)
-                                    .font(.custom("Manrope-Bold", size: 14))
-                                    .foregroundColor(.white)
-                                    .opacity(0.7)
-                            }
-                            .padding(.vertical, -12)
-                        }
-                        
-                    }
-                    .padding(.horizontal, 15)
-                    .padding(.top, isTinyTask ? CGFloat(task.taskDuration / 5) : 7)
+            if isInteractive {
+                Button(action: {
+                    navigateToViewTask = true
+                }) {
+                    taskView(task: task, isTinyTask: isTinyTask, isShortTask: isShortTask)
                 }
                 .offset(x: -10, y: calculatePosition(for: task.startTime) - 690) // y will change. y = -690 for 12 AM, y = 690 for 11 PM
+                .navigationDestination(isPresented: $navigateToViewTask) {
+                    ViewTaskView(task: Task(
+                        title: task.title,
+                        exactStart: task.exactStart,
+                        taskDuration: task.taskDuration,
+                        priority: task.priority,
+                        addBreaks: task.addBreaks,
+                        breaksEvery: task.breaksEvery,
+                        breakDuration: task.breakDuration,
+                        description: task.description,
+                        startTime: task.startTime
+                    ))
+                }
+            } else {
+                taskView(task: task, isTinyTask: isTinyTask, isShortTask: isShortTask)
+                    .offset(x: -10, y: calculatePosition(for: task.startTime) - 690) // y will change. y = -690 for 12 AM, y = 690 for 11 PM
             }
-//                .navigationDestination(isPresented: $navigateToViewTask) {
-//                    ViewTaskView(task: Task(
-//                        title: "Fold Laundry",
-//                        exactStart: false,
-//                        taskDuration: 60,
-//                        priority: "Low",
-//                        addBreaks: false,
-//                        breaksEvery: 0,
-//                        breakDuration: 0,
-//                        description: "",
-//                        startTime: Date.now
-//                    ))
-//                }
-
+        }
+    }
+    
+    func taskView(task: Task, isTinyTask: Bool, isShortTask: Bool) -> some View {
+        ZStack(alignment: .topLeading) {
+            RoundedRectangle(cornerRadius: min(CGFloat(task.taskDuration) / 4, 16))
+                .fill(Color(UIColor(red: 192/255, green: 80/255, blue: 127/255, alpha: 1)))
+                .frame(height: CGFloat(task.taskDuration)) // height will change
+            
+            VStack(alignment: .leading) {
+                Text(task.title)
+                    .frame(alignment: .leading)
+                    .font(.custom("Manrope-Bold", size: isTinyTask ? CGFloat(task.taskDuration) / 2.5 : 16))
+                    .foregroundColor(.white)
+                
+                if !isShortTask {
+                    HStack {
+                        Image(systemName: "clock")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .foregroundStyle(.white)
+                            .opacity(0.7)
+                            .frame(width: 13)
+                        Text("\(formattedTimeRange(for: task))")
+                            .frame(alignment: .leading)
+                            .font(.custom("Manrope-Bold", size: 14))
+                            .foregroundColor(.white)
+                            .opacity(0.7)
+                    }
+                    .padding(.vertical, -12)
+                }
+                
+            }
+            .padding(.horizontal, 15)
+            .padding(.top, isTinyTask ? CGFloat(task.taskDuration / 5) : 7)
         }
     }
     
@@ -209,7 +217,7 @@ struct CalendarView<Content: View>: View {
 }
 
 #Preview {
-    CalendarView(taskManager: TaskManager()) {
+    CalendarView(isInteractive: false, taskManager: TaskManager()) {
         EmptyView()
     }
 }

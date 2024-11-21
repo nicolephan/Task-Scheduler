@@ -10,7 +10,6 @@ struct PreviewView: View {
     @Environment(\.dismiss) var dismiss
     
     @ObservedObject var taskManager: TaskManager
-//    var schedule: Schedule TODO: Delete
     @Binding var scheduleExists: Bool
     var onSave: (Schedule) -> Void
     
@@ -49,7 +48,7 @@ struct PreviewView: View {
             
             Spacer()
             
-            CalendarView(taskManager: taskManager) {
+            CalendarView(isInteractive: false, taskManager: taskManager) {
                 EmptyView()
             }
         }
