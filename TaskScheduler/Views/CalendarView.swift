@@ -46,6 +46,7 @@ struct CalendarView<Content: View>: View {
                     
                     ForEach(taskManager.schedule.Tasks, id: \.self) {
                         task in
+                        
                         placeTask(task: task)
                     }
                     
@@ -126,19 +127,51 @@ struct CalendarView<Content: View>: View {
     }
     
     func placeTask(task: Task) -> some View {
-        HStack {
+        let isShortTask = task.taskDuration < 55
+        let isTinyTask = task.taskDuration < 35
+        
+        return HStack {
             Spacer()
                 .frame(width: 60)
                 .padding()
-            ZStack(alignment: .leading) {
-                Button(action: {
-                    navigateToViewTask = true
-                }) {
-                    RoundedRectangle(cornerRadius: CGFloat(16 * task.taskDuration / heightPerHour))
+
+            Button(action: {
+                navigateToViewTask = true
+            }) {
+                ZStack(alignment: .topLeading) {
+                    RoundedRectangle(cornerRadius: min(CGFloat(task.taskDuration) / 4, 16))
                         .fill(Color(UIColor(red: 192/255, green: 80/255, blue: 127/255, alpha: 1)))
                         .frame(height: CGFloat(task.taskDuration)) // height will change
-                        .offset(x: -10, y: calculatePosition(for: task.startTime) - 690) // y will change. y = -690 for 12 AM, y = 690 for 11 PM
+                    
+                    VStack(alignment: .leading) {
+                        Text(task.title)
+                            .frame(alignment: .leading)
+                            .font(.custom("Manrope-Bold", size: isTinyTask ? CGFloat(task.taskDuration) / 2.5 : 16))
+                            .foregroundColor(.white)
+                        
+                        if !isShortTask {
+                            HStack {
+                                Image(systemName: "clock")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .foregroundStyle(.white)
+                                    .opacity(0.7)
+                                    .frame(width: 13)
+                                Text("\(formattedTimeRange(for: task))")
+                                    .frame(alignment: .leading)
+                                    .font(.custom("Manrope-Bold", size: 14))
+                                    .foregroundColor(.white)
+                                    .opacity(0.7)
+                            }
+                            .padding(.vertical, -12)
+                        }
+                        
+                    }
+                    .padding(.horizontal, 15)
+                    .padding(.top, isTinyTask ? CGFloat(task.taskDuration / 5) : 7)
                 }
+                .offset(x: -10, y: calculatePosition(for: task.startTime) - 690) // y will change. y = -690 for 12 AM, y = 690 for 11 PM
+            }
 //                .navigationDestination(isPresented: $navigateToViewTask) {
 //                    ViewTaskView(task: Task(
 //                        title: "Fold Laundry",
@@ -152,31 +185,7 @@ struct CalendarView<Content: View>: View {
 //                        startTime: Date.now
 //                    ))
 //                }
-                
-                VStack(alignment: .leading) {
-                    Text(task.title)
-                        .frame(alignment: .leading)
-                        .font(.custom("Manrope-Bold", size: 16))
-                        .foregroundColor(.white)
-                    
-                    HStack {
-                        Image(systemName: "clock")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .foregroundStyle(.white)
-                            .opacity(0.7)
-                            .frame(width: 13)
-                        Text("12:00PM-1:00PM")
-                            .frame(alignment: .leading)
-                            .font(.custom("Manrope-Bold", size: 13))
-                            .foregroundColor(.white)
-                            .opacity(0.7)
-                    }
-                    .padding(.vertical, -12)
-                }
-                .padding(.top, 50)
-                .padding(.horizontal, 10)
-            }
+
         }
     }
     
@@ -188,6 +197,14 @@ struct CalendarView<Content: View>: View {
         let totalMinutes = (hour * 60) + minute
         
         return CGFloat(totalMinutes)
+    }
+    
+    func formattedTimeRange(for task: Task) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
+        let start = formatter.string(from: task.startTime)
+        let end = formatter.string(from: task.startTime.addingTimeInterval(TimeInterval(task.taskDuration * 60)))
+        return "\(start) - \(end)"
     }
 }
 
