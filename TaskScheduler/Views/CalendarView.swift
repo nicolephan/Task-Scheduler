@@ -154,7 +154,7 @@ struct CalendarView<Content: View>: View {
 //                }
                 
                 VStack(alignment: .leading) {
-                    Text(task.title.isEmpty ? "No Title" : task.title)
+                    Text(task.title)
                         .frame(alignment: .leading)
                         .font(.custom("Manrope-Bold", size: 16))
                         .foregroundColor(.white)
