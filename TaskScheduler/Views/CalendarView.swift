@@ -44,13 +44,16 @@ struct CalendarView<Content: View>: View {
                     }
                     .padding()
                     
+                    let positions = calculateDynamicPositions(tasks: taskManager.schedule.Tasks)
+                    
                     ForEach(taskManager.schedule.Tasks, id: \.self) {
                         task in
                         
-                        placeTask(task: task)
+                        if let yOffset = positions[task] {
+                            placeTask(task: task, yOffset: yOffset)
+                        }
                     }
-                    
-                    
+
 //                    HStack { // TODO: Example task block
 //                        Spacer()
 //                            .frame(width: 60)
@@ -126,7 +129,7 @@ struct CalendarView<Content: View>: View {
         return formatter.string(from: date)
     }
     
-    func placeTask(task: Task) -> some View {
+    func placeTask(task: Task, yOffset: CGFloat) -> some View {
         let isShortTask = task.taskDuration < 55
         let isTinyTask = task.taskDuration < 35
         
@@ -141,7 +144,8 @@ struct CalendarView<Content: View>: View {
                 }) {
                     taskView(task: task, isTinyTask: isTinyTask, isShortTask: isShortTask)
                 }
-                .offset(x: -10, y: calculatePosition(for: task.startTime) - 690) // y will change. y = -690 for 12 AM, y = 690 for 11 PM
+//                .offset(x: -10, y: calculatePosition(for: task.startTime) - 690) // y will change. y = -690 for 12 AM, y = 690 for 11 PM
+                .offset(x: -10, y: yOffset)
                 .navigationDestination(isPresented: $navigateToViewTask) {
                     ViewTaskView(task: Task(
                         title: task.title,
@@ -157,9 +161,12 @@ struct CalendarView<Content: View>: View {
                 }
             } else {
                 taskView(task: task, isTinyTask: isTinyTask, isShortTask: isShortTask)
-                    .offset(x: -10, y: calculatePosition(for: task.startTime) - 690) // y will change. y = -690 for 12 AM, y = 690 for 11 PM
+//                    .offset(x: -10, y: calculatePosition(for: task.startTime) - 690) // y will change. y = -690 for 12 AM, y = 690 for 11 PM
+                    .offset(x: -10, y: yOffset)
             }
         }
+        
+        
     }
     
     func taskView(task: Task, isTinyTask: Bool, isShortTask: Bool) -> some View {
@@ -205,6 +212,42 @@ struct CalendarView<Content: View>: View {
         let totalMinutes = (hour * 60) + minute
         
         return CGFloat(totalMinutes)
+    }
+    
+    func calculateDynamicPositions(tasks: [Task]) -> [Task: CGFloat] {
+        var positions: [Task: CGFloat] = [:]
+        var currentYOffset: CGFloat = calculatePosition(for: taskManager.schedule.startTime) - 690 // Tracks the next available Y position
+
+        // Sort tasks: exactStart first, then by priority
+        let sortedTasks = tasks.sorted { task1, task2 in
+            if task1.exactStart != task2.exactStart {
+                return task1.exactStart // Exact-start tasks come first
+            }
+            if task1.exactStart && task2.exactStart {
+                return task1.startTime < task2.startTime // Sort exact-start by startTime
+            }
+            return task1.priority > task2.priority // Non-exact-start sorted by priority
+        }
+
+        // Now we have tasks sorted correctly
+        print(sortedTasks.map { $0.title }) // Debug: Check task order
+        
+        // Assign Y-positions
+        for task in sortedTasks {
+            if task.exactStart {
+                positions[task] = calculatePosition(for: task.startTime) - 690
+            } else {
+                positions[task] = currentYOffset
+                currentYOffset += CGFloat(task.taskDuration) // Stack below the previous task
+            }
+        }
+
+        return positions
+    }
+
+    
+    func calculatePositionForPriority (priority: Int) -> CGFloat {
+        return 0
     }
     
     func formattedTimeRange(for task: Task) -> String {

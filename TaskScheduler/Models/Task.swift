@@ -9,7 +9,7 @@ struct Task: Hashable {
     var title: String
     var exactStart: Bool
     var taskDuration: Int // in minutes
-    var priority: String
+    var priority: Int // 0 = low, 1 = med, or 2 = high
     var addBreaks: Bool
     var breaksEvery: Int // minutes
     var breakDuration: Int // minutes

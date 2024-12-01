@@ -127,38 +127,38 @@ struct TaskForm: View {
                 
                 HStack {
                     Button(action: {
-                        task.priority = "Low"
+                        task.priority = 0
                     }){
                         Text("Low")
                             .frame(width: 60, height: 16)
                             .padding()
-                            .foregroundColor(task.priority == "Low" ? Color.white : .text)
-                            .background(task.priority == "Low" ? .blueAccent : .card)
+                            .foregroundColor(task.priority == 0 ? Color.white : .text)
+                            .background(task.priority == 0 ? .blueAccent : .card)
                             .cornerRadius(15)
                             .font(.custom("Manrope-Bold", size: 18))
                         
                     }
                     
                     Button(action: {
-                        task.priority = "Medium"
+                        task.priority = 1
                     }){
                         Text("Medium")
                             .frame(width: 80, height: 16)
                             .padding()
-                            .foregroundColor(task.priority == "Medium" ? Color.white : .text)
-                            .background(task.priority == "Medium" ? .orangeAccent : .card)
+                            .foregroundColor(task.priority == 1 ? Color.white : .text)
+                            .background(task.priority == 1 ? .orangeAccent : .card)
                             .cornerRadius(15)
                             .font(.custom("Manrope-Bold", size: 18))
                     }
                     
                     Button(action: {
-                        task.priority = "High"
+                        task.priority = 2
                     }){
                         Text("High")
                             .frame(width: 60, height: 16)
                             .padding()
-                            .foregroundColor(task.priority == "High" ? Color.white : .text)
-                            .background(task.priority == "High" ? .redAccent : .card)
+                            .foregroundColor(task.priority == 2 ? Color.white : .text)
+                            .background(task.priority == 2 ? .redAccent : .card)
                             .cornerRadius(15)
                             .font(.custom("Manrope-Bold", size: 18))
                     }
@@ -344,7 +344,7 @@ struct TaskForm_Previews: PreviewProvider {
             title: "Complete Beta App",
             exactStart: false,
             taskDuration: 95,
-            priority: "High",
+            priority: 2,
             addBreaks: true,
             breaksEvery: 20,
             breakDuration: 10,

@@ -151,7 +151,7 @@ struct ViewTaskView: View {
             title: "Complete Beta App",
             exactStart: false,
             taskDuration: 95,
-            priority: "High",
+            priority: 2,
             addBreaks: true,
             breaksEvery: 20,
             breakDuration: 10,
