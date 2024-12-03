@@ -216,7 +216,7 @@ struct CalendarView<Content: View>: View {
     
     func calculateDynamicPositions(tasks: [Task]) -> [Task: CGFloat] {
         var positions: [Task: CGFloat] = [:]
-        var currentYOffset: CGFloat = calculatePosition(for: taskManager.schedule.startTime) - 690 // Tracks the next available Y position
+        var occupiedSlots: [(start: CGFloat, end: CGFloat)] = []
 
         // Sort tasks: exactStart first, then by priority
         let sortedTasks = tasks.sorted { task1, task2 in
@@ -229,16 +229,36 @@ struct CalendarView<Content: View>: View {
             return task1.priority > task2.priority // Non-exact-start sorted by priority
         }
 
-        // Now we have tasks sorted correctly
         print(sortedTasks.map { $0.title }) // Debug: Check task order
         
         // Assign Y-positions
         for task in sortedTasks {
             if task.exactStart {
-                positions[task] = calculatePosition(for: task.startTime) - 690
+                let exactPosition = calculatePosition(for: task.startTime) - 690
+                positions[task] = exactPosition
+
+                let endPosition = exactPosition + CGFloat(task.taskDuration)
+                occupiedSlots.append((start: exactPosition, end: endPosition))
             } else {
-                positions[task] = currentYOffset
-                currentYOffset += CGFloat(task.taskDuration) // Stack below the previous task
+                var currentYOffset: CGFloat = calculatePosition(for: taskManager.schedule.startTime) - 690 // Tracks the next available Y position
+                let taskDuration = CGFloat(task.taskDuration)
+                
+                while true {
+                    // Check if currentYOffset overlaps with any occupied slot
+                    let overlaps = occupiedSlots.contains { slot in
+                        (currentYOffset < slot.end && currentYOffset + taskDuration > slot.start)
+                    }
+                    
+                    if !overlaps {
+                        // Found a spot where the task can fit
+                        positions[task] = currentYOffset
+                        occupiedSlots.append((start: currentYOffset, end: currentYOffset + taskDuration))
+                        break
+                    }
+                    
+                    // Move to the next available position
+                    currentYOffset += 5 // Increment by 5-minute blocks
+                }
             }
         }
 
