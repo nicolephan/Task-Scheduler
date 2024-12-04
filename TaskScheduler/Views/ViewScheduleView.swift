@@ -8,6 +8,7 @@ import SwiftUI
 struct ViewScheduleView: View {
     
     @Environment(\.dismiss) var dismiss
+    @Binding var path: NavigationPath
     
     @State private var localSchedule: Schedule
     @State private var isEditable = false
@@ -18,10 +19,11 @@ struct ViewScheduleView: View {
     @Binding var scheduleExists: Bool
     var onSave: (Schedule) -> Void
     
-    init(schedule: Schedule, scheduleExists: Binding<Bool>, onSave: @escaping (Schedule) -> Void) {
+    init(schedule: Schedule, scheduleExists: Binding<Bool>, onSave: @escaping (Schedule) -> Void, path: Binding<NavigationPath>) {
         self._localSchedule = State(initialValue: schedule)
         self.onSave = onSave
         self._scheduleExists = scheduleExists
+        self._path = path
     }
     
     var body: some View {
@@ -44,7 +46,7 @@ struct ViewScheduleView: View {
                     Button(action: {
                         if isEditable{
                             if validateTimeRange() && validateForm() {
-                                isEditable.toggle()
+                                path.append(localSchedule)
                             } else {
                                 showAlert = true
                             }
@@ -265,7 +267,8 @@ struct ViewScheduleView_PreviewWrapper: View {
         ViewScheduleView(
             schedule: sampleSchedule,
             scheduleExists: $scheduleExists,
-            onSave: { _ in }
+            onSave: { _ in },
+            path: .constant(NavigationPath())
         )
     }
 }
