@@ -173,7 +173,14 @@ struct ViewScheduleView: View {
                                             .font(.custom("Manrope-Bold", size: 18))
                                             .disabled(!isEditable)
                                         if isEditable{
-                                            NavigationLink(destination: NewTaskView(task: $localSchedule.Tasks[index])) {
+                                            NavigationLink(
+                                                destination: NewTaskView(
+                                                    task: $localSchedule.Tasks[index],
+                                                    deleteTask: {
+                                                        localSchedule.Tasks.remove(at: index)
+                                                    }
+                                                )
+                                            ) {
                                                 Image("pencil")
                                                     .resizable()
                                                     .frame(width: 24, height: 24)

@@ -164,7 +164,14 @@ struct NewScheduleView: View {
                                             .frame(height: 44)
                                             .foregroundStyle(.text)
                                         
-                                        NavigationLink(destination: NewTaskView(task: $localSchedule.Tasks[index])) {
+                                        NavigationLink(
+                                            destination: NewTaskView(
+                                                task: $localSchedule.Tasks[index],
+                                                deleteTask: {
+                                                        localSchedule.Tasks.remove(at: index)
+                                                }
+                                            )
+                                        ) {
                                             Image("pencil")
                                                 .resizable()
                                                 .frame(width: 24, height: 24)

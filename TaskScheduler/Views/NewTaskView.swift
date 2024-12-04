@@ -9,10 +9,13 @@ struct NewTaskView: View {
     
     @Binding var task: Task
     @State private var localTask: Task
+    
+    var deleteTask: (() -> Void)?
         
-    init(task: Binding<Task>) {
+    init(task: Binding<Task>, deleteTask: (() -> Void)? = nil) {
         self._task = task
         self._localTask = State(initialValue: task.wrappedValue)
+        self.deleteTask = deleteTask
     }
     @State private var showAlert = false
     @State private var alertMessage = ""
@@ -92,10 +95,38 @@ struct NewTaskView: View {
                     }
                 }
                 .padding(.horizontal, 8)
+                
+                Button(action: {
+                    showAlert = true
+                }) {
+                    Text("Delete Task")
+                        .font(.system(size: 18)).bold()
+                        .padding()
+                        .foregroundColor(.white)
+                        .background(Color.redAccent)
+                        .cornerRadius(15)
+                }
+                .padding()
+                
             }
             .navigationBarBackButtonHidden(true)
             .alert(isPresented: $showAlert) {
-                Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+                if alertMessage.isEmpty{
+                    return Alert(
+                        title: Text("Delete Task"),
+                        message: Text("Are you sure you want to delete this task?"),
+                        primaryButton: .destructive(Text("Delete")) {
+                            deleteTask?()
+                            dismiss()
+                        },
+                        secondaryButton: .cancel()
+                    )
+                } else {
+                     return Alert(
+                        title: Text("Error"),
+                        message: Text(alertMessage),
+                        dismissButton: .default(Text("OK")))
+                }
             }
         }
     }
