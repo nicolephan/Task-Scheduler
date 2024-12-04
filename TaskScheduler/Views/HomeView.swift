@@ -45,11 +45,13 @@ struct HomeView: View {
                             }
                         }) {
                             if scheduleExists{
-                                Image("editButton")
+                                Image(systemName: "pencil.circle.fill")
                                     .resizable()
                                     .frame(maxWidth: 64, maxHeight: 64)
                                     .aspectRatio(contentMode: .fill)
                                     .foregroundStyle(Color("blueAccent"))
+                                    .background(Color.white)
+                                    .cornerRadius(35)
                                     .shadow(radius: CGFloat(4))
                             } else {
                                 Image("plusCircle")
