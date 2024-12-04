@@ -11,7 +11,6 @@ struct CalendarView<Content: View>: View {
     let heightPerHour = 60
     let lineHeight = 2 // Height of calendar lines
     var isInteractive: Bool
-    var tasks: [Task]
     
     @ObservedObject var taskManager: TaskManager
     
@@ -65,7 +64,7 @@ struct CalendarView<Content: View>: View {
                     hasInitialized = true
                 }
             }
-            .onChange(of: tasks) {
+            .onChange(of: taskManager.schedule.Tasks) {
                 recalculatePositions()
             }
             .onAppear {
@@ -77,9 +76,10 @@ struct CalendarView<Content: View>: View {
     } // view ends
     
     func recalculatePositions() {
-        let (calculatedPositions, calculatedTasks) = calculateDynamicPositions(tasks: tasks)
+        let (calculatedPositions, calculatedTasks) = calculateDynamicPositions(tasks: taskManager.schedule.Tasks)
         positions = calculatedPositions
         updatedTasks = calculatedTasks
+        taskManager.schedule.Tasks = calculatedTasks
     }
     
     func formattedHour(_ hour: Int) -> String {
@@ -256,7 +256,7 @@ struct CalendarView<Content: View>: View {
 }
 
 #Preview {
-    CalendarView(isInteractive: false, tasks: [], taskManager: TaskManager()) {
+    CalendarView(isInteractive: false, taskManager: TaskManager()) {
         EmptyView()
     }
 }

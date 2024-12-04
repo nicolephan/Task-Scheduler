@@ -61,6 +61,7 @@ struct NewScheduleView: View {
                     Spacer()
                     Button(action: {
                         if validateTimeRange() && validateForm() {
+                            taskManager.schedule = localSchedule
                             path.append(localSchedule) // Send schedule to Preview to be finalized
                         }
                     }){
