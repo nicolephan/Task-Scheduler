@@ -31,7 +31,7 @@ struct NewScheduleView: View {
             title: "",
             exactStart: false,
             taskDuration: 0,
-            priority: "Low",
+            priority: 0,
             addBreaks: false,
             breaksEvery: 0,
             breakDuration: 0,
@@ -178,7 +178,7 @@ struct NewScheduleView: View {
                                 
                                 HStack{
                                     Button(action: {
-                                        let newTask = Task(title: "", exactStart: false, taskDuration: 0, priority: "Low", addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "", startTime: Date())
+                                        let newTask = Task(title: "", exactStart: false, taskDuration: 0, priority: 0, addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "", startTime: Date())
                                         
                                         localSchedule.Tasks.append(newTask)
                                     }) {

@@ -114,7 +114,7 @@ struct HomeView: View {
                                     title: "",
                                     exactStart: false,
                                     taskDuration: 0,
-                                    priority: "Low",
+                                    priority: 0,
                                     addBreaks: false,
                                     breaksEvery: 0,
                                     breakDuration: 0,

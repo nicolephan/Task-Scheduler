@@ -28,6 +28,7 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		79621D032CEC0EAD0077258D /* Views */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Views; sourceTree = "<group>"; };
+		798A2D872CEFD2D100079F78 /* ViewModels */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ViewModels; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +64,7 @@
 				79318B912CC8AAC600E6668B /* Info.plist */,
 				792854572CAF7BDE00173C27 /* TaskSchedulerApp.swift */,
 				79621D032CEC0EAD0077258D /* Views */,
+				798A2D872CEFD2D100079F78 /* ViewModels */,
 				7931891E2CB77B9600E6668B /* Models */,
 				79318B8F2CC8AA6400E6668B /* Manrope-VariableFont_wght.ttf */,
 				7928545B2CAF7BDF00173C27 /* Assets.xcassets */,
@@ -105,6 +107,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				79621D032CEC0EAD0077258D /* Views */,
+				798A2D872CEFD2D100079F78 /* ViewModels */,
 			);
 			name = TaskScheduler;
 			productName = TaskScheduler;
