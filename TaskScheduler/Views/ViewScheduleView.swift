@@ -44,6 +44,7 @@ struct ViewScheduleView: View {
                     Button(action: {
                         if isEditable{
                             if validateTimeRange() && validateForm() {
+                                onSave(localSchedule)
                                 isEditable.toggle()
                             } else {
                                 showAlert = true
