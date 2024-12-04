@@ -11,10 +11,14 @@ struct CalendarView<Content: View>: View {
     let heightPerHour = 60
     let lineHeight = 2 // Height of calendar lines
     var isInteractive: Bool
+    var tasks: [Task]
     
     @ObservedObject var taskManager: TaskManager
     
     @State private var navigateToViewTask: Bool = false
+    @State private var positions: [Task: CGFloat] = [:]
+    @State private var updatedTasks: [Task] = []
+    @State private var hasInitialized: Bool = false
     
     var customOverlay: () -> Content // Accept any custom content
     
@@ -44,71 +48,25 @@ struct CalendarView<Content: View>: View {
                     }
                     .padding()
                     
-                    let positions = calculateDynamicPositions(tasks: taskManager.schedule.Tasks)
-                    
-                    ForEach(taskManager.schedule.Tasks, id: \.self) {
+                    ForEach(updatedTasks, id: \.self) {
                         task in
                         
                         if let yOffset = positions[task] {
                             placeTask(task: task, yOffset: yOffset)
                         }
                     }
-
-//                    HStack { // TODO: Example task block
-//                        Spacer()
-//                            .frame(width: 60)
-//                            .padding()
-//                        ZStack(alignment: .leading) {
-//                            Button(action: {
-//                                navigateToViewTask = true
-//                            }) {
-//                                RoundedRectangle(cornerRadius: 16)
-//                                    .fill(Color(UIColor(red: 192/255, green: 80/255, blue: 127/255, alpha: 1)))
-//                                    .frame(height: CGFloat(heightPerHour)) // height will change
-//                                    .offset(x: -10, y: 30) // y will change. y = -690 for 12 AM, y = 690 for 11 PM
-//                            }
-//                            .navigationDestination(isPresented: $navigateToViewTask) {
-//                                ViewTaskView(task: Task(
-//                                    title: "Fold Laundry",
-//                                    exactStart: false,
-//                                    taskDuration: 60,
-//                                    priority: "Low",
-//                                    addBreaks: false,
-//                                    breaksEvery: 0,
-//                                    breakDuration: 0,
-//                                    description: "",
-//                                    startTime: Date.now
-//                                ))
-//                            }
-//                            
-//                            VStack(alignment: .leading) {
-//                                Text("Fold Laundry")
-//                                    .frame(alignment: .leading)
-//                                    .font(.custom("Manrope-Bold", size: 16))
-//                                    .foregroundColor(.white)
-//                                
-//                                HStack {
-//                                    Image(systemName: "clock")
-//                                        .resizable()
-//                                        .aspectRatio(contentMode: .fit)
-//                                        .foregroundStyle(.white)
-//                                        .opacity(0.7)
-//                                        .frame(width: 13)
-//                                    Text("12:00PM-1:00PM")
-//                                        .frame(alignment: .leading)
-//                                        .font(.custom("Manrope-Bold", size: 13))
-//                                        .foregroundColor(.white)
-//                                        .opacity(0.7)
-//                                }
-//                                .padding(.vertical, -12)
-//                            }
-//                            .padding(.top, 50)
-//                            .padding(.horizontal, 10)
-//                        }
-//                    } // TODO: Example task block
                     
                     customOverlay() // Inject red marker in HomeView
                 }
+            }
+            .onAppear {
+                if !hasInitialized {
+                    recalculatePositions()
+                    hasInitialized = true
+                }
+            }
+            .onChange(of: tasks) {
+                recalculatePositions()
             }
             .onAppear {
                 // Scroll to 7 AM when the view first appears
@@ -117,6 +75,12 @@ struct CalendarView<Content: View>: View {
         }
         .padding(.leading, -5)
     } // view ends
+    
+    func recalculatePositions() {
+        let (calculatedPositions, calculatedTasks) = calculateDynamicPositions(tasks: tasks)
+        positions = calculatedPositions
+        updatedTasks = calculatedTasks
+    }
     
     func formattedHour(_ hour: Int) -> String {
         let formatter = DateFormatter()
@@ -165,8 +129,6 @@ struct CalendarView<Content: View>: View {
                     .offset(x: -10, y: yOffset)
             }
         }
-        
-        
     }
     
     func taskView(task: Task, isTinyTask: Bool, isShortTask: Bool) -> some View {
@@ -214,12 +176,19 @@ struct CalendarView<Content: View>: View {
         return CGFloat(totalMinutes)
     }
     
-    func calculateDynamicPositions(tasks: [Task]) -> [Task: CGFloat] {
+    func calculateDate(for position: CGFloat) -> Date {
+        let totalMinutes = Int(position) + 690
+        let newDate = Calendar.current.date(byAdding: .minute, value: totalMinutes, to: Calendar.current.startOfDay(for: Date())) ?? Calendar.current.startOfDay(for: Date())
+        return newDate
+    }
+    
+    func calculateDynamicPositions(tasks: [Task]) -> (positions: [Task: CGFloat], updatedTasks: [Task]) {
         var positions: [Task: CGFloat] = [:]
         var occupiedSlots: [(start: CGFloat, end: CGFloat)] = []
+        var localTasks = tasks // Local mutable copy
 
         // Sort tasks: exactStart first, then by priority
-        let sortedTasks = tasks.sorted { task1, task2 in
+        let sortedTasks = localTasks.sorted { task1, task2 in
             if task1.exactStart != task2.exactStart {
                 return task1.exactStart // Exact-start tasks come first
             }
@@ -252,6 +221,13 @@ struct CalendarView<Content: View>: View {
                     if !overlaps {
                         // Found a spot where the task can fit
                         positions[task] = currentYOffset
+                        
+                        // Update task start time
+                        let newStartTime = calculateDate(for: currentYOffset)
+                        if let taskIndex = localTasks.firstIndex(of: task) {
+                            localTasks[taskIndex].startTime = newStartTime
+                        }
+                        
                         occupiedSlots.append((start: currentYOffset, end: currentYOffset + taskDuration))
                         break
                     }
@@ -262,7 +238,7 @@ struct CalendarView<Content: View>: View {
             }
         }
 
-        return positions
+        return (positions, localTasks)
     }
 
     
@@ -280,7 +256,7 @@ struct CalendarView<Content: View>: View {
 }
 
 #Preview {
-    CalendarView(isInteractive: false, taskManager: TaskManager()) {
+    CalendarView(isInteractive: false, tasks: [], taskManager: TaskManager()) {
         EmptyView()
     }
 }

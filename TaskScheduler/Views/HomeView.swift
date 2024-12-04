@@ -44,7 +44,7 @@ struct HomeView: View {
                         Spacer()
                     }
                     
-                    CalendarView(isInteractive: true, taskManager: taskManager) {
+                    CalendarView(isInteractive: true, tasks: taskManager.schedule.Tasks, taskManager: taskManager) {
                         redMarkerView()
                     }
                 }
@@ -96,6 +96,7 @@ struct HomeView: View {
                             
                             PreviewView(
                                 taskManager: taskManager,
+                                tempSchedule: schedule,
                                 scheduleExists: $scheduleExists,
                                 onSave: { finalizedSchedule in
                                     taskManager.schedule = finalizedSchedule
