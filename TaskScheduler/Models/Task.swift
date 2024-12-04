@@ -5,7 +5,8 @@
 
 import Foundation
 
-struct Task: Hashable {
+struct Task: Hashable, Identifiable {
+    var id: UUID = UUID()
     var title: String
     var exactStart: Bool
     var taskDuration: Int // in minutes

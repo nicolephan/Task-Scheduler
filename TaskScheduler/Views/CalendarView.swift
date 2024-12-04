@@ -16,7 +16,7 @@ struct CalendarView<Content: View>: View {
     @ObservedObject var taskManager: TaskManager
     
     @State private var navigateToViewTask: Bool = false
-    @State private var positions: [Task: CGFloat] = [:]
+    @State private var positions: [UUID: CGFloat] = [:]
     @State private var updatedTasks: [Task] = []
     @State private var hasInitialized: Bool = false
     
@@ -48,14 +48,14 @@ struct CalendarView<Content: View>: View {
                     }
                     .padding()
                     
-                    ForEach(updatedTasks, id: \.self) {
-                        task in
-                        
-                        if let yOffset = positions[task] {
+                    ForEach(updatedTasks, id: \.id) { task in
+                        if let yOffset = positions[task.id] {
                             placeTask(task: task, yOffset: yOffset)
+                        } else {
+                            Text("Task \(task.title) has no position.")
                         }
                     }
-                    
+             
                     customOverlay() // Inject red marker in HomeView
                 }
             }
@@ -182,8 +182,8 @@ struct CalendarView<Content: View>: View {
         return newDate
     }
     
-    func calculateDynamicPositions(tasks: [Task]) -> (positions: [Task: CGFloat], updatedTasks: [Task]) {
-        var positions: [Task: CGFloat] = [:]
+    func calculateDynamicPositions(tasks: [Task]) -> (positions: [UUID: CGFloat], updatedTasks: [Task]) {
+        var positions: [UUID: CGFloat] = [:]
         var occupiedSlots: [(start: CGFloat, end: CGFloat)] = []
         var localTasks = tasks // Local mutable copy
 
@@ -198,13 +198,13 @@ struct CalendarView<Content: View>: View {
             return task1.priority > task2.priority // Non-exact-start sorted by priority
         }
 
-        print(sortedTasks.map { $0.title }) // Debug: Check task order
+//        print(sortedTasks.map { $0.title }) // TODO: Debug: Check task order
         
         // Assign Y-positions
         for task in sortedTasks {
             if task.exactStart {
                 let exactPosition = calculatePosition(for: task.startTime) - 690
-                positions[task] = exactPosition
+                positions[task.id] = exactPosition
 
                 let endPosition = exactPosition + CGFloat(task.taskDuration)
                 occupiedSlots.append((start: exactPosition, end: endPosition))
@@ -220,7 +220,7 @@ struct CalendarView<Content: View>: View {
                     
                     if !overlaps {
                         // Found a spot where the task can fit
-                        positions[task] = currentYOffset
+                        positions[task.id] = currentYOffset
                         
                         // Update task start time
                         let newStartTime = calculateDate(for: currentYOffset)
@@ -239,11 +239,6 @@ struct CalendarView<Content: View>: View {
         }
 
         return (positions, localTasks)
-    }
-
-    
-    func calculatePositionForPriority (priority: Int) -> CGFloat {
-        return 0
     }
     
     func formattedTimeRange(for task: Task) -> String {
