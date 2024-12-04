@@ -17,6 +17,7 @@ struct CalendarView<Content: View>: View {
     @State private var navigateToViewTask: Bool = false
     @State private var positions: [Task: CGFloat] = [:]
     @State private var updatedTasks: [Task] = []
+    @State private var hasInitialized: Bool = false
     
     var customOverlay: () -> Content // Accept any custom content
     
@@ -58,12 +59,13 @@ struct CalendarView<Content: View>: View {
                 }
             }
             .onAppear {
-                DispatchQueue.main.async {
-                    let (calculatedPositions, calculatedTasks) = calculateDynamicPositions(tasks: taskManager.schedule.Tasks)
-                    positions = calculatedPositions
-                    updatedTasks = calculatedTasks
-                    taskManager.schedule.Tasks = calculatedTasks
+                if !hasInitialized {
+                    recalculatePositions()
+                    hasInitialized = true
                 }
+            }
+            .onChange(of: taskManager.schedule.Tasks) {
+                recalculatePositions()
             }
             .onAppear {
                 // Scroll to 7 AM when the view first appears
@@ -72,6 +74,13 @@ struct CalendarView<Content: View>: View {
         }
         .padding(.leading, -5)
     } // view ends
+    
+    func recalculatePositions() {
+        let (calculatedPositions, calculatedTasks) = calculateDynamicPositions(tasks: taskManager.schedule.Tasks)
+        positions = calculatedPositions
+        updatedTasks = calculatedTasks
+        taskManager.schedule.Tasks = calculatedTasks
+    }
     
     func formattedHour(_ hour: Int) -> String {
         let formatter = DateFormatter()
@@ -120,8 +129,6 @@ struct CalendarView<Content: View>: View {
                     .offset(x: -10, y: yOffset)
             }
         }
-        
-        
     }
     
     func taskView(task: Task, isTinyTask: Bool, isShortTask: Bool) -> some View {
@@ -191,7 +198,7 @@ struct CalendarView<Content: View>: View {
             return task1.priority > task2.priority // Non-exact-start sorted by priority
         }
 
-//        print(sortedTasks.map { $0.title }) // Debug: Check task order
+        print(sortedTasks.map { $0.title }) // Debug: Check task order
         
         // Assign Y-positions
         for task in sortedTasks {
