@@ -33,9 +33,6 @@ struct NewScheduleView: View {
             exactStart: false,
             taskDuration: 0,
             priority: 0,
-            addBreaks: false,
-            breaksEvery: 0,
-            breakDuration: 0,
             description: "",
             startTime: modifiedSchedule.startTime
         )
@@ -189,7 +186,7 @@ struct NewScheduleView: View {
                                 
                                 HStack{
                                     Button(action: {
-                                        let newTask = Task(title: "", exactStart: false, taskDuration: 0, priority: 0, addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "", startTime: Date())
+                                        let newTask = Task(title: "", exactStart: false, taskDuration: 0, priority: 0, description: "", startTime: Date())
                                         
                                         localSchedule.Tasks.append(newTask)
                                     }) {
@@ -261,7 +258,7 @@ struct NewScheduleView: View {
                 showAlert = true
                 return false
             }
-            if task.taskDuration == 0 || (task.addBreaks && task.breaksEvery == 0) || (task.addBreaks && task.breakDuration == 0){
+            if task.taskDuration == 0 {
                 alertMessage = "Required information for task \"\(task.title)\" is not present"
                 showAlert = true
                 return false
