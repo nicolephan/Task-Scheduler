@@ -31,13 +31,13 @@ struct PositionCalculator {
         // Assign Y-positions
         for task in sortedTasks {
             if task.exactStart {
-                let exactPosition = calculatePosition(for: task.startTime) + calculateDurationAdjustment(for: task.taskDuration) + baseOffset
+                let exactPosition = calculatePosition(for: task.startTime) + baseOffset
                 positions[task.id] = exactPosition
 
                 let endPosition = exactPosition + CGFloat(task.taskDuration)
                 occupiedSlots.append((start: exactPosition, end: endPosition))
             } else {
-                var currentYOffset: CGFloat = calculatePosition(for: startTime) + calculateDurationAdjustment(for: task.taskDuration) + baseOffset // Tracks the next available Y position
+                var currentYOffset: CGFloat = calculatePosition(for: startTime) + baseOffset // Tracks the next available Y position
                 let taskDuration = CGFloat(task.taskDuration)
                 
                 while true {
@@ -47,11 +47,14 @@ struct PositionCalculator {
                     }
                     
                     if !overlaps {
+                        let adjustedYOffset = currentYOffset + calculateDurationAdjustment(for: task.taskDuration)
+
+                        
                         // Found a spot where the task can fit
-                        positions[task.id] = currentYOffset
+                        positions[task.id] = adjustedYOffset
                         
                         // Update task start time
-                        let newStartTime = calculateDate(for: currentYOffset)
+                        let newStartTime = calculateDate(for: currentYOffset, taskDuration: task.taskDuration)
                         if let taskIndex = localTasks.firstIndex(of: task) {
                             localTasks[taskIndex].startTime = newStartTime
                         }
@@ -78,8 +81,8 @@ struct PositionCalculator {
         return CGFloat(totalMinutes)
     }
     
-    static func calculateDate(for position: CGFloat) -> Date {
-        let totalMinutes = Int(position) + 690
+    static func calculateDate(for position: CGFloat, taskDuration: Int) -> Date {
+        let totalMinutes = Int(position - baseOffset)
         let newDate = Calendar.current.date(byAdding: .minute, value: totalMinutes, to: Calendar.current.startOfDay(for: Date())) ?? Calendar.current.startOfDay(for: Date())
         return newDate
     }
