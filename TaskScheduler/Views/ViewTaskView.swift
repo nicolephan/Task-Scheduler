@@ -11,8 +11,6 @@ struct ViewTaskView: View {
     @State private var editedTask: Task
     @State private var showAlert = false
     @State private var alertMessage = ""
-    
-    var deleteTask: (() -> Void)?
 
     var task: Task {
         didSet {
@@ -20,10 +18,9 @@ struct ViewTaskView: View {
         }
     }
     
-    init(task: Task, deleteTask: (() -> Void)? = nil) {
+    init(task: Task) {
         self.task = task
         self._editedTask = State(initialValue: task)
-        self.deleteTask = deleteTask
     }
     
     var taskHour: String{
@@ -41,11 +38,7 @@ struct ViewTaskView: View {
         VStack {
             HStack{     //BUTTONS
                 Button(action: {
-                    if isEditable{
-                        isEditable.toggle()
-                    } else {
-                        dismiss()
-                    }
+                    dismiss()
                 }) {
                     Image("backButton")
                         .resizable()
@@ -55,37 +48,11 @@ struct ViewTaskView: View {
                 }
                 
                 Spacer()
-                let action = isEditable ? "Edit" : "View"
-                Text("\(action) Task")
+                Text("View Task")
                     .font(.custom("Manrope-ExtraBold", size: 24))
                     .foregroundStyle(.text)
                 Spacer()
                 
-                Button(action: {
-                    if isEditable{
-                        if validateTask(){
-                            isEditable.toggle()
-                        } else {
-                            showAlert = true
-                        }
-                    } else {
-                        isEditable.toggle()
-                    }
-                }){
-                    if isEditable {
-                        Image(systemName: "checkmark.circle.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxWidth: 40)
-                            .foregroundStyle(.blueAccent)
-                    } else {
-                        Image("editButton")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxWidth: 40)
-                            .foregroundStyle(.blueAccent)
-                    }
-                }
             }   //BUTTONS END
             .padding([.horizontal, .bottom], 20)
             Spacer().frame(maxHeight: 15)
@@ -99,43 +66,17 @@ struct ViewTaskView: View {
                 )
                 Spacer()
                 
-                if isEditable {
-                    Button(action: {
-                        showAlert = true
-                    }) {
-                        Text("Delete Task")
-                            .font(.system(size: 18)).bold()
-                            .padding()
-                            .foregroundColor(.white)
-                            .background(Color.redAccent)
-                            .cornerRadius(15)
-                    }
-                    .padding()
-                }
-                
             }
             .navigationBarBackButtonHidden(true)
             .onAppear {
                 self.editedTask = task
             }
             .alert(isPresented: $showAlert) {
-                if alertMessage.isEmpty{
-                    return Alert(
-                        title: Text("Delete Task"),
-                        message: Text("Are you sure you want to delete this task?"),
-                        primaryButton: .destructive(Text("Delete")) {
-                            deleteTask?()
-                            dismiss()
-                        },
-                        secondaryButton: .cancel()
-                    )
-                } else {
-                    return Alert(
+                 Alert(
                         title: Text("Error"),
                         message: Text(alertMessage),
                         dismissButton: .default(Text("OK")))
                 }
-            }
         }
     }
     

@@ -96,6 +96,9 @@ struct HomeView: View {
                                 }
                             )
                         }
+                        .navigationDestination(for: Task.self) { task in
+                            ViewTaskView(task: task)
+                        }
                     }
                     .padding(.bottom, 70)
                     .padding(.trailing, 30)

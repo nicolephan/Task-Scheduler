@@ -19,6 +19,7 @@ struct CalendarView<Content: View>: View {
     @State private var positions: [UUID: CGFloat] = [:]
     @State private var updatedTasks: [Task] = []
     @State private var hasInitialized: Bool = false
+    @State private var taskToNavigateTo: Task?
     
     private let taskColors: [Color] = [
         Color(UIColor(red: 83/255, green: 139/255, blue: 220/225, alpha: 1)), // blue
@@ -110,31 +111,17 @@ struct CalendarView<Content: View>: View {
             Spacer()
                 .frame(width: 60)
                 .padding()
-
-            if isInteractive {
-                Button(action: {
-                    navigateToViewTask = true
-                }) {
-                    taskView(task: task, isTinyTask: isTinyTask, isShortTask: isShortTask, taskColor: taskColor)
-                }
-//                .offset(x: -10, y: calculatePosition(for: task.startTime) - 690) // y will change. y = -690 for 12 AM, y = 690 for 11 PM
-                .offset(x: -10, y: yOffset)
-                .navigationDestination(isPresented: $navigateToViewTask) {
-                    ViewTaskView(task: Task(
-                        title: task.title,
-                        exactStart: task.exactStart,
-                        taskDuration: task.taskDuration,
-                        priority: task.priority,
-                        description: task.description,
-                        startTime: task.startTime
-                    ))
-                }
-            } else {
+            
+            NavigationLink(value: task) {
                 taskView(task: task, isTinyTask: isTinyTask, isShortTask: isShortTask, taskColor: taskColor)
-//                    .offset(x: -10, y: calculatePosition(for: task.startTime) - 690) // y will change. y = -690 for 12 AM, y = 690 for 11 PM
-                    .offset(x: -10, y: yOffset)
             }
+            .offset(x: -10, y: yOffset)
+            .background(
+                NavigationLink(value: task, label: { EmptyView() })
+                    .hidden()
+            )
         }
+
     }
     
     func taskView(task: Task, isTinyTask: Bool, isShortTask: Bool, taskColor: Color) -> some View {
