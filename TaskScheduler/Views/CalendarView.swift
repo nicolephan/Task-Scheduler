@@ -125,9 +125,6 @@ struct CalendarView<Content: View>: View {
                         exactStart: task.exactStart,
                         taskDuration: task.taskDuration,
                         priority: task.priority,
-                        addBreaks: task.addBreaks,
-                        breaksEvery: task.breaksEvery,
-                        breakDuration: task.breakDuration,
                         description: task.description,
                         startTime: task.startTime
                     ))

@@ -168,7 +168,7 @@ struct ViewScheduleView: View {
                                     if isEditable {
                                         HStack {
                                             Button(action: {
-                                                let newTask = Task(title: "", exactStart: false, taskDuration: 0, priority: 0, addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "", startTime: Date())
+                                                let newTask = Task(title: "", exactStart: false, taskDuration: 0, priority: 0, description: "", startTime: Date())
                                                 localSchedule.Tasks.append(newTask)
                                             }) {
                                                 Image("plus")
@@ -231,7 +231,7 @@ struct ViewScheduleView: View {
                                     
                                     if isEditable {
                                         Button(action: {
-                                            let newTask = Task(title: "", exactStart: false, taskDuration: 0, priority: 0, addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "", startTime: Date())
+                                            let newTask = Task(title: "", exactStart: false, taskDuration: 0, priority: 0, description: "", startTime: Date())
                                             
                                             localSchedule.Tasks.append(newTask)
                                         }) {
@@ -292,7 +292,7 @@ struct ViewScheduleView: View {
                 showAlert = true
                 return false
             }
-            if task.taskDuration == 0 || (task.addBreaks && task.breaksEvery == 0) || (task.addBreaks && task.breakDuration == 0){
+            if task.taskDuration == 0 {
                 alertMessage = "Mandatory Information for task \"\(task.title)\" is not present"
                 showAlert = true
                 return false
@@ -313,9 +313,9 @@ struct ViewScheduleView_PreviewWrapper: View {
     
     var body: some View {
         let sampleTasks = [
-            Task(title: "Task 1", exactStart: false, taskDuration: 60, priority: 1, addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "Description for Task 1", startTime: Date()),
-            Task(title: "Task 2", exactStart: false, taskDuration: 30, priority: 2, addBreaks: true, breaksEvery: 15, breakDuration: 5, description: "Description for Task 2", startTime: Date()),
-            Task(title: "Task 3", exactStart: false, taskDuration: 90, priority: 0, addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "Description for Task 3", startTime: Date())
+            Task(title: "Task 1", exactStart: false, taskDuration: 60, priority: 1, description: "Description for Task 1", startTime: Date()),
+            Task(title: "Task 2", exactStart: false, taskDuration: 30, priority: 2, description: "Description for Task 2", startTime: Date()),
+            Task(title: "Task 3", exactStart: false, taskDuration: 90, priority: 0, description: "Description for Task 3", startTime: Date())
         ]
         let sampleSchedule = Schedule(startTime: Date(), endTime: Date().addingTimeInterval(3600), Tasks: sampleTasks)
 
