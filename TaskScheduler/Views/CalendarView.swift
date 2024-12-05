@@ -135,7 +135,7 @@ struct CalendarView<Content: View>: View {
         ZStack(alignment: .topLeading) {
             RoundedRectangle(cornerRadius: min(CGFloat(task.taskDuration) / 4, 16))
                 .fill(Color(UIColor(red: 192/255, green: 80/255, blue: 127/255, alpha: 1)))
-                .frame(height: CGFloat(task.taskDuration)) // height will change
+                .frame(height: CGFloat(task.taskDuration))
             
             VStack(alignment: .leading) {
                 Text(task.title)
