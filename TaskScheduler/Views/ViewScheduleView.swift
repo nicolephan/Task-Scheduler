@@ -8,6 +8,7 @@ import SwiftUI
 struct ViewScheduleView: View {
     
     @Environment(\.dismiss) var dismiss
+    @Binding var path: NavigationPath
     
     @State private var localSchedule: Schedule
     @State private var isEditable = false
@@ -18,10 +19,11 @@ struct ViewScheduleView: View {
     @Binding var scheduleExists: Bool
     var onSave: (Schedule) -> Void
     
-    init(schedule: Schedule, scheduleExists: Binding<Bool>, onSave: @escaping (Schedule) -> Void) {
+    init(schedule: Schedule, scheduleExists: Binding<Bool>, onSave: @escaping (Schedule) -> Void, path: Binding<NavigationPath>) {
         self._localSchedule = State(initialValue: schedule)
         self.onSave = onSave
         self._scheduleExists = scheduleExists
+        self._path = path
     }
     
     var body: some View {
@@ -44,7 +46,7 @@ struct ViewScheduleView: View {
                     Button(action: {
                         if isEditable{
                             if validateTimeRange() && validateForm() {
-                                isEditable.toggle()
+                                path.append(localSchedule)
                             } else {
                                 showAlert = true
                             }
@@ -173,7 +175,14 @@ struct ViewScheduleView: View {
                                             .font(.custom("Manrope-Bold", size: 18))
                                             .disabled(!isEditable)
                                         if isEditable{
-                                            NavigationLink(destination: NewTaskView(task: $localSchedule.Tasks[index])) {
+                                            NavigationLink(
+                                                destination: NewTaskView(
+                                                    task: $localSchedule.Tasks[index],
+                                                    deleteTask: {
+                                                        localSchedule.Tasks.remove(at: index)
+                                                    }
+                                                )
+                                            ) {
                                                 Image("pencil")
                                                     .resizable()
                                                     .frame(width: 24, height: 24)
@@ -183,6 +192,24 @@ struct ViewScheduleView: View {
                                         }
                                     }
                                     .padding(.vertical, 3)
+                                }
+                                
+                                if isEditable {
+                                    Button(action: {
+                                        let newTask = Task(title: "", exactStart: false, taskDuration: 0, priority: 0, addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "", startTime: Date())
+                                        
+                                        localSchedule.Tasks.append(newTask)
+                                    }) {
+                                        Image("plus")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 30, height: 30)
+                                            .foregroundColor(.white)
+                                            .frame(maxWidth: .infinity, minHeight: 44)
+                                            .background(Color(red: 68/255, green: 115/255, blue: 207/255))
+                                            .cornerRadius(10)
+                                    }
+                                    .padding(.top, 15)
                                 }
                             }
                             .padding(30)
@@ -258,7 +285,8 @@ struct ViewScheduleView_PreviewWrapper: View {
         ViewScheduleView(
             schedule: sampleSchedule,
             scheduleExists: $scheduleExists,
-            onSave: { _ in }
+            onSave: { _ in },
+            path: .constant(NavigationPath())
         )
     }
 }

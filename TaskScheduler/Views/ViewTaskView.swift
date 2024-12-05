@@ -11,6 +11,8 @@ struct ViewTaskView: View {
     @State private var editedTask: Task
     @State private var showAlert = false
     @State private var alertMessage = ""
+    
+    var deleteTask: (() -> Void)?
 
     var task: Task {
         didSet {
@@ -18,9 +20,10 @@ struct ViewTaskView: View {
         }
     }
     
-    init(task: Task) {
+    init(task: Task, deleteTask: (() -> Void)? = nil) {
         self.task = task
         self._editedTask = State(initialValue: task)
+        self.deleteTask = deleteTask
     }
     
     var taskHour: String{
@@ -115,13 +118,43 @@ struct ViewTaskView: View {
                     breakFrequencyMins: .constant(BreaksEveryMin)
                 )
                 Spacer()
+                
+                if isEditable {
+                    Button(action: {
+                        showAlert = true
+                    }) {
+                        Text("Delete Task")
+                            .font(.system(size: 18)).bold()
+                            .padding()
+                            .foregroundColor(.white)
+                            .background(Color.redAccent)
+                            .cornerRadius(15)
+                    }
+                    .padding()
+                }
+                
             }
             .navigationBarBackButtonHidden(true)
             .onAppear {
                 self.editedTask = task
             }
             .alert(isPresented: $showAlert) {
-                Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+                if alertMessage.isEmpty{
+                    return Alert(
+                        title: Text("Delete Task"),
+                        message: Text("Are you sure you want to delete this task?"),
+                        primaryButton: .destructive(Text("Delete")) {
+                            deleteTask?()
+                            dismiss()
+                        },
+                        secondaryButton: .cancel()
+                    )
+                } else {
+                    return Alert(
+                        title: Text("Error"),
+                        message: Text(alertMessage),
+                        dismissButton: .default(Text("OK")))
+                }
             }
         }
     }

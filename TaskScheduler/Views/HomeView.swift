@@ -76,7 +76,8 @@ struct HomeView: View {
                                     onSave: { updatedSchedule in
                                         taskManager.schedule = updatedSchedule
                                         path.removeLast(path.count)
-                                    }
+                                    },
+                                    path: $path
                                 )
                             }
                         }
