@@ -14,6 +14,9 @@ struct PreviewView: View {
     @Binding var scheduleExists: Bool
     var onSave: (Schedule) -> Void
     
+    @State private var showAlert = false
+    @State private var alertMessage = ""
+    
     var body: some View {
         VStack {
             HStack{     //BUTTONS
@@ -34,9 +37,22 @@ struct PreviewView: View {
                 Spacer()
                 
                 Button(action: {
-                    scheduleExists = true
-                    taskManager.schedule = localSchedule // Commit changes
-                    onSave(localSchedule)
+                    var exceedsEndTime = false
+                    
+                    for task in localSchedule.Tasks {
+                        let taskEndTime = task.startTime.addingTimeInterval(TimeInterval(task.taskDuration * 60))
+                        if taskEndTime > localSchedule.endTime {
+                            exceedsEndTime = true
+                            break
+                        }
+                    }
+                    
+                    if exceedsEndTime {
+                        alertMessage = "Tasks exceed the schedule's end time. Please adjust or continue anyway."
+                        showAlert = true
+                    } else {
+                        saveSchedule()
+                    }
                 }){
                     Image(systemName: "checkmark.circle.fill")
                         .resizable()
@@ -54,6 +70,22 @@ struct PreviewView: View {
                 EmptyView()
             }
         }
+        .alert(isPresented: $showAlert) {
+            Alert(
+                title: Text("Not enough time for all tasks"),
+                message: Text(alertMessage),
+                primaryButton: .default(Text("Continue"), action: {
+                    saveSchedule()
+                }),
+                secondaryButton: .cancel(Text("Back"))
+            )
+        }
+    } // view ends
+    
+    private func saveSchedule() {
+        scheduleExists = true
+        taskManager.schedule = localSchedule // Commit changes
+        onSave(localSchedule)
     }
 }
 

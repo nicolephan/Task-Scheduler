@@ -31,7 +31,7 @@ struct PositionCalculator {
         // Assign Y-positions
         for task in sortedTasks {
             if task.exactStart {
-                let exactPosition = calculatePosition(for: task.startTime) + baseOffset
+                let exactPosition = calculatePosition(for: task.startTime) + baseOffset + calculateDurationAdjustment(for: task.taskDuration)
                 positions[task.id] = exactPosition
 
                 let endPosition = exactPosition + CGFloat(task.taskDuration)
