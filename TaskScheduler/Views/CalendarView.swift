@@ -20,6 +20,13 @@ struct CalendarView<Content: View>: View {
     @State private var updatedTasks: [Task] = []
     @State private var hasInitialized: Bool = false
     
+    private let taskColors: [Color] = [
+        Color(UIColor(red: 83/255, green: 139/255, blue: 220/225, alpha: 1)), // blue
+        Color(UIColor(red: 255/255, green: 145/255, blue: 153/225, alpha: 1)), // pink
+        Color(UIColor(red: 0/255, green: 186/255, blue: 136/225, alpha: 1)), // green
+        Color(UIColor(red: 192/255, green: 80/255, blue: 127/255, alpha: 1)) // red-pink
+    ]
+    
     var customOverlay: () -> Content // Accept any custom content
     
     var body: some View {
@@ -48,9 +55,11 @@ struct CalendarView<Content: View>: View {
                     }
                     .padding()
                     
-                    ForEach(updatedTasks, id: \.id) { task in
+                    ForEach(updatedTasks.indices, id: \.self) { index in
+                        let task = updatedTasks[index]
                         if let yOffset = positions[task.id] {
-                            placeTask(task: task, yOffset: yOffset)
+                            let taskColor = taskColors[index % taskColors.count]
+                            placeTask(task: task, yOffset: yOffset, taskColor: taskColor)
                         } else {
                             Text("Task \(task.title) has no position.")
                         }
@@ -93,7 +102,7 @@ struct CalendarView<Content: View>: View {
         return formatter.string(from: date)
     }
     
-    func placeTask(task: Task, yOffset: CGFloat) -> some View {
+    func placeTask(task: Task, yOffset: CGFloat, taskColor: Color) -> some View {
         let isShortTask = task.taskDuration < 55
         let isTinyTask = task.taskDuration < 35
         
@@ -106,7 +115,7 @@ struct CalendarView<Content: View>: View {
                 Button(action: {
                     navigateToViewTask = true
                 }) {
-                    taskView(task: task, isTinyTask: isTinyTask, isShortTask: isShortTask)
+                    taskView(task: task, isTinyTask: isTinyTask, isShortTask: isShortTask, taskColor: taskColor)
                 }
 //                .offset(x: -10, y: calculatePosition(for: task.startTime) - 690) // y will change. y = -690 for 12 AM, y = 690 for 11 PM
                 .offset(x: -10, y: yOffset)
@@ -124,17 +133,17 @@ struct CalendarView<Content: View>: View {
                     ))
                 }
             } else {
-                taskView(task: task, isTinyTask: isTinyTask, isShortTask: isShortTask)
+                taskView(task: task, isTinyTask: isTinyTask, isShortTask: isShortTask, taskColor: taskColor)
 //                    .offset(x: -10, y: calculatePosition(for: task.startTime) - 690) // y will change. y = -690 for 12 AM, y = 690 for 11 PM
                     .offset(x: -10, y: yOffset)
             }
         }
     }
     
-    func taskView(task: Task, isTinyTask: Bool, isShortTask: Bool) -> some View {
+    func taskView(task: Task, isTinyTask: Bool, isShortTask: Bool, taskColor: Color) -> some View {
         ZStack(alignment: .topLeading) {
             RoundedRectangle(cornerRadius: min(CGFloat(task.taskDuration) / 4, 16))
-                .fill(Color(UIColor(red: 192/255, green: 80/255, blue: 127/255, alpha: 1)))
+                .fill(taskColor)
                 .frame(height: CGFloat(task.taskDuration))
             
             VStack(alignment: .leading) {
