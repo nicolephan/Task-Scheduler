@@ -236,10 +236,18 @@ struct NewScheduleView: View {
     }
     
     private func validateTimeRange() -> Bool {
+        let calendar = Calendar.current
+
         if localSchedule.endTime < localSchedule.startTime {
-            alertMessage = "Start time cannot be later than the end time. Please adjust the times to continue."
-            showAlert = true
-            return false
+            // Adjust the end time to the next day
+            if let adjustedEndTime = calendar.date(byAdding: .day, value: 1, to: localSchedule.endTime) {
+                localSchedule.endTime = adjustedEndTime
+                return true
+            } else {
+                alertMessage = "Could not process time range. Please adjust."
+                showAlert = true
+                return false
+            }
         }
         return true
     }
