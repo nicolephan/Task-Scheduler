@@ -11,7 +11,7 @@ struct CalendarView<Content: View>: View {
     
     let hours = Array(0...23)
     let heightPerHour = 60
-    let lineHeight = 2 // Height of calendar lines
+    let lineHeight = 2
     var isInteractive: Bool
     var schedule: Schedule
     
@@ -131,7 +131,6 @@ struct CalendarView<Content: View>: View {
                     .hidden()
             )
         }
-
     }
     
     func taskView(task: Task, isTinyTask: Bool, isShortTask: Bool, taskColor: Color) -> some View {

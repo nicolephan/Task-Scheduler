@@ -13,7 +13,7 @@ struct PositionCalculator {
     static func calculateDynamicPositions(tasks: [Task], startTime: Date) -> (positions: [UUID: CGFloat], updatedTasks: [Task]) {
         var positions: [UUID: CGFloat] = [:]
         var occupiedSlots: [(start: CGFloat, end: CGFloat)] = []
-        var localTasks = tasks // Local mutable copy
+        var localTasks = tasks
 
         // Sort tasks: exactStart first, then by priority
         let sortedTasks = localTasks.sorted { task1, task2 in
@@ -25,8 +25,6 @@ struct PositionCalculator {
             }
             return task1.priority > task2.priority
         }
-
-//        print(sortedTasks.map { $0.title }) // TODO: Debug: Check task order
         
         // Assign Y-positions
         for task in sortedTasks {
@@ -62,7 +60,7 @@ struct PositionCalculator {
                         break
                     }
                     
-                    currentYOffset += 5 // Increment by 5-minute blocks
+                    currentYOffset += 5
                 }
             }
         }
