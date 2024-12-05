@@ -28,6 +28,7 @@ struct NewTaskView: View {
     @State private var breakFrequencyMins: String = ""
     
     @Environment(\.dismiss) var dismiss
+    @Environment(\.verticalSizeClass) var verticalSizeClass: UserInterfaceSizeClass?
     
     var body: some View {
         VStack {
@@ -60,7 +61,7 @@ struct NewTaskView: View {
                         .foregroundStyle(.blueAccent)
                 }
             }   //BUTTONS END
-            .padding([.horizontal, .bottom], 20)
+            .padding(20)
             .onAppear {
                 let totalDuration = task.taskDuration
                 taskHours = String(totalDuration / 60)

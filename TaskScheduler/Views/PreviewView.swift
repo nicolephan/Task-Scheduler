@@ -89,6 +89,6 @@ struct PreviewView: View {
     }
 }
 
-//#Preview {
-//    PreviewView(taskManager: TaskManager(), scheduleExists: .constant(false), onSave: {_ in })
-//}
+#Preview {
+    PreviewView(taskManager: TaskManager(), localSchedule: Schedule(startTime: Date(), endTime: Date(), Tasks: []), scheduleExists: .constant(false), onSave: {_ in })
+}
