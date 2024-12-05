@@ -193,6 +193,24 @@ struct ViewScheduleView: View {
                                     }
                                     .padding(.vertical, 3)
                                 }
+                                
+                                if isEditable {
+                                    Button(action: {
+                                        let newTask = Task(title: "", exactStart: false, taskDuration: 0, priority: 0, addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "", startTime: Date())
+                                        
+                                        localSchedule.Tasks.append(newTask)
+                                    }) {
+                                        Image("plus")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 30, height: 30)
+                                            .foregroundColor(.white)
+                                            .frame(maxWidth: .infinity, minHeight: 44)
+                                            .background(Color(red: 68/255, green: 115/255, blue: 207/255))
+                                            .cornerRadius(10)
+                                    }
+                                    .padding(.top, 15)
+                                }
                             }
                             .padding(30)
                             .background(Color(red: 95/255, green: 149/255, blue: 231/255))
