@@ -48,7 +48,6 @@ struct PositionCalculator {
                     
                     if !overlaps {
                         let adjustedYOffset = currentYOffset + calculateDurationAdjustment(for: task.taskDuration)
-
                         
                         // Found a spot where the task can fit
                         positions[task.id] = adjustedYOffset
