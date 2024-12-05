@@ -7,6 +7,8 @@ import SwiftUI
 
 struct CalendarView<Content: View>: View {
     
+    @Environment(\.verticalSizeClass) var verticalSizeClass: UserInterfaceSizeClass?
+    
     let hours = Array(0...23)
     let heightPerHour = 60
     let lineHeight = 2 // Height of calendar lines
@@ -74,13 +76,21 @@ struct CalendarView<Content: View>: View {
                     recalculatePositions()
                     hasInitialized = true
                 }
+                
+                // Scroll to x hrs before current time when the view first appears
+                let currentHour = Calendar.current.component(.hour, from: Date())
+                let targetHour: Int
+                
+                if verticalSizeClass == .compact {
+                    targetHour = max(0, currentHour - 2)
+                } else {
+                    targetHour = max(0, currentHour - 5)
+                }
+                
+                scrollProxy.scrollTo(targetHour, anchor: .top)
             }
             .onChange(of: schedule.Tasks) {
                 recalculatePositions()
-            }
-            .onAppear {
-                // Scroll to 7 AM when the view first appears
-                scrollProxy.scrollTo(7, anchor: .top)
             }
         }
         .padding(.leading, -5)
