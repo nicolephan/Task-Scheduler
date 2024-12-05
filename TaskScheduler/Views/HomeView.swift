@@ -28,7 +28,7 @@ struct HomeView: View {
                         Spacer()
                     }
                     
-                    CalendarView(isInteractive: true, tasks: taskManager.schedule.Tasks, taskManager: taskManager) {
+                    CalendarView(isInteractive: true, schedule: taskManager.schedule, taskManager: taskManager) {
                         redMarkerView()
                     }
                 }
@@ -81,11 +81,11 @@ struct HomeView: View {
                             }
                         }
                         .navigationDestination(for: Schedule.self) { // Send schedule to Preview to be finalized
-                            schedule in
+                            localSchedule in
                             
                             PreviewView(
                                 taskManager: taskManager,
-                                tempSchedule: schedule,
+                                localSchedule: localSchedule,
                                 scheduleExists: $scheduleExists,
                                 onSave: { finalizedSchedule in
                                     taskManager.schedule = finalizedSchedule
