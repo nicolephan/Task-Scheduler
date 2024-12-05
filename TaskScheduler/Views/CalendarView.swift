@@ -96,6 +96,7 @@ struct CalendarView<Content: View>: View {
     func placeTask(task: Task, yOffset: CGFloat) -> some View {
         let isShortTask = task.taskDuration < 55
         let isTinyTask = task.taskDuration < 35
+        print("yOffset: \(yOffset)") //TODO: Delete
         
         return HStack {
             Spacer()
