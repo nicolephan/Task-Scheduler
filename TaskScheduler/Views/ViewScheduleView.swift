@@ -48,6 +48,8 @@ struct ViewScheduleView: View {
                     Button(action: {
                         if isEditable{
                             if validateTimeRange() && validateForm() {
+                                let (_, updatedTasks) = PositionCalculator.calculateDynamicPositions(tasks: localSchedule.Tasks, startTime: localSchedule.startTime)
+                                localSchedule.Tasks = updatedTasks
                                 path.append(localSchedule)
                             } else {
                                 showAlert = true
