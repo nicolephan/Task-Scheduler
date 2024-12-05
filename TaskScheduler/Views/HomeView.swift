@@ -7,6 +7,8 @@ import SwiftUI
 
 struct HomeView: View {
     
+    @Environment(\.verticalSizeClass) var verticalSizeClass: UserInterfaceSizeClass?
+    
     @State private var scheduleExists: Bool = false
     @State private var navigateToViewSchedule: Bool = false
     @State private var redMarkerOffset: Int = -720 // 12 AM offset is y = -720. 11 PM offset is y = 660.
@@ -119,9 +121,15 @@ struct HomeView: View {
                     .fill(.redAccent)
                     .frame(width: 14)
                 
-                Rectangle()
-                    .fill(.redAccent)
-                    .frame(width: 300, height: 2)
+                if verticalSizeClass == .regular {
+                    Rectangle()
+                        .fill(.redAccent)
+                        .frame(width: 300, height: 2)
+                } else {
+                    Rectangle()
+                        .fill(.redAccent)
+                        .frame(width: 650, height: 2)
+                }
             }
             .padding()
             .offset(y: pos)

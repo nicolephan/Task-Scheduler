@@ -8,6 +8,7 @@ import SwiftUI
 struct NewScheduleView: View {
     
     @Environment(\.dismiss) var dismiss
+    @Environment(\.verticalSizeClass) var verticalSizeClass: UserInterfaceSizeClass?
     
     @Binding var path: NavigationPath
     
@@ -82,6 +83,7 @@ struct NewScheduleView: View {
                 Text("New Schedule")
                     .font(.custom("Manrope-ExtraBold", size: 32))
                     .foregroundStyle(.text)
+                    .padding(.top, -20)
                 
                 ZStack(alignment: .bottom) {
                     Image("sky-boy")
@@ -205,7 +207,6 @@ struct NewScheduleView: View {
                                     Spacer()
                                         .frame(width: 40)
                                 }
-                                
                             }
                             .padding(30)
                             .background(Color(red: 95/255, green: 149/255, blue: 231/255))
@@ -231,6 +232,7 @@ struct NewScheduleView: View {
                     }
                 }
             }
+            .padding(.top, (verticalSizeClass == .compact) ? 100 : 0)
         }
         .navigationBarBackButtonHidden(true)
     }
