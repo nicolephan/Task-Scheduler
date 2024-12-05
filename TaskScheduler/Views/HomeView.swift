@@ -7,25 +7,9 @@ import SwiftUI
 
 struct HomeView: View {
     
-    @State private var showingOptions: Bool = false
     @State private var scheduleExists: Bool = false
     @State private var navigateToViewSchedule: Bool = false
-    @State private var navigateToNewTask: Bool = false
     @State private var redMarkerOffset: Int = -720 // 12 AM offset is y = -720. 11 PM offset is y = 660.
-    
-//    @State private var currentSchedule: Schedule? TODO: Delete
-    @State private var standAloneTasks: [Task] = []
-//    @State private var task = Task(
-//        title: "",
-//        exactStart: false,
-//        taskDuration: 0,
-//        priority: "Low",
-//        addBreaks: false,
-//        breaksEvery: 0,
-//        breakDuration: 0,
-//        description: "",
-//        startTime: Date()
-//    )
     
     @State private var path = NavigationPath()
     
@@ -44,7 +28,7 @@ struct HomeView: View {
                         Spacer()
                     }
                     
-                    CalendarView(isInteractive: true, tasks: taskManager.schedule.Tasks, taskManager: taskManager) {
+                    CalendarView(isInteractive: true, schedule: taskManager.schedule, taskManager: taskManager) {
                         redMarkerView()
                     }
                 }
@@ -55,17 +39,25 @@ struct HomeView: View {
                         Spacer()
                         Button(action: {
                             if scheduleExists {
-                                showingOptions = true
+                                path.append("viewSchedule")
                             } else {
                                 path.append("newSchedule")
                             }
                         }) {
-                            Image("plusCircle")
-                                .resizable()
-                                .frame(maxWidth: 64, maxHeight: 64)
-                                .aspectRatio(contentMode: .fill)
-                                .foregroundStyle(Color("blueAccent"))
-                                .shadow(radius: CGFloat(4))
+                            if scheduleExists{
+                                Image("editButton")
+                                    .resizable()
+                                    .frame(maxWidth: 64, maxHeight: 64)
+                                    .aspectRatio(contentMode: .fill)
+                                    .shadow(radius: CGFloat(4))
+                            } else {
+                                Image("plusCircle")
+                                    .resizable()
+                                    .frame(maxWidth: 64, maxHeight: 64)
+                                    .aspectRatio(contentMode: .fill)
+                                    .foregroundStyle(Color("blueAccent"))
+                                    .shadow(radius: CGFloat(4))
+                            }
                         }
                         .navigationDestination(for: String.self) {
                             destination in
@@ -87,45 +79,20 @@ struct HomeView: View {
                                     },
                                     path: $path
                                 )
-                            } else if destination == "newTask" {
-                                let taskIndex = standAloneTasks.count - 1
-                                NewTaskView(task: $standAloneTasks[taskIndex])
                             }
                         }
                         .navigationDestination(for: Schedule.self) { // Send schedule to Preview to be finalized
-                            schedule in
+                            localSchedule in
                             
                             PreviewView(
                                 taskManager: taskManager,
-                                tempSchedule: schedule,
+                                localSchedule: localSchedule,
                                 scheduleExists: $scheduleExists,
                                 onSave: { finalizedSchedule in
                                     taskManager.schedule = finalizedSchedule
                                     path.removeLast(path.count) // Return Home
                                 }
                             )
-                        }
-                        .confirmationDialog("Select Choice", isPresented: $showingOptions, titleVisibility: .visible) {
-                            
-                            Button("View Schedule") {
-                                path.append("viewSchedule")
-                            }
-                            
-                            Button("New Task") {
-                                let newTask = Task(
-                                    title: "",
-                                    exactStart: false,
-                                    taskDuration: 0,
-                                    priority: 0,
-                                    addBreaks: false,
-                                    breaksEvery: 0,
-                                    breakDuration: 0,
-                                    description: "",
-                                    startTime: Date()
-                                )
-                                standAloneTasks.append(newTask)
-                                path.append("newTask")
-                            }
                         }
                     }
                     .padding(.bottom, 70)
