@@ -7,6 +7,9 @@ import Foundation
 import SwiftUI
 
 struct PositionCalculator {
+    
+    static let baseOffset: CGFloat = -690
+    
     static func calculateDynamicPositions(tasks: [Task], startTime: Date) -> (positions: [UUID: CGFloat], updatedTasks: [Task]) {
         var positions: [UUID: CGFloat] = [:]
         var occupiedSlots: [(start: CGFloat, end: CGFloat)] = []
@@ -28,14 +31,13 @@ struct PositionCalculator {
         // Assign Y-positions
         for task in sortedTasks {
             if task.exactStart {
-                print("task start time: \(task.startTime)") //TODO: DElete
-                let exactPosition = calculatePosition(for: task.startTime, taskDuration: task.taskDuration)
+                let exactPosition = calculatePosition(for: task.startTime) + calculateDurationAdjustment(for: task.taskDuration) + baseOffset
                 positions[task.id] = exactPosition
 
                 let endPosition = exactPosition + CGFloat(task.taskDuration)
                 occupiedSlots.append((start: exactPosition, end: endPosition))
             } else {
-                var currentYOffset: CGFloat = calculatePosition(for: task.startTime, taskDuration: task.taskDuration) // Tracks the next available Y position
+                var currentYOffset: CGFloat = calculatePosition(for: startTime) + calculateDurationAdjustment(for: task.taskDuration) + baseOffset // Tracks the next available Y position
                 let taskDuration = CGFloat(task.taskDuration)
                 
                 while true {
@@ -66,27 +68,26 @@ struct PositionCalculator {
         return (positions, localTasks)
     }
     
-    static func calculatePosition(for date: Date, taskDuration: Int) -> CGFloat {
-        let baseOffset: CGFloat = -690
-
+    static func calculatePosition(for date: Date) -> CGFloat {
         let components = Calendar.current.dateComponents([.hour, .minute], from: date)
         let hour = components.hour ?? 0
         let minute = components.minute ?? 0
+
         let totalMinutes = (hour * 60) + minute
-
-        // Adjustment factor: 15 points per 30 minutes difference from 1 hour
-        let adjustmentFactor: CGFloat = 15.0
-        let durationAdjustment: CGFloat = CGFloat(taskDuration - 60) / 30.0 * adjustmentFactor
-
-        // Calculate final position
-        let yOffset = CGFloat(totalMinutes) + baseOffset + durationAdjustment
-        return yOffset
+        
+        return CGFloat(totalMinutes)
     }
-
     
     static func calculateDate(for position: CGFloat) -> Date {
-        let totalMinutes = Int(position) + 660
+        let totalMinutes = Int(position) + 690
         let newDate = Calendar.current.date(byAdding: .minute, value: totalMinutes, to: Calendar.current.startOfDay(for: Date())) ?? Calendar.current.startOfDay(for: Date())
         return newDate
+    }
+    
+    static func calculateDurationAdjustment(for taskDuration: Int) -> CGFloat {
+        let adjustmentFactor: CGFloat = 15.0
+        let durationAdjustment = CGFloat(taskDuration - 60) / 30.0 * adjustmentFactor
+
+        return durationAdjustment
     }
 }
