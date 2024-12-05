@@ -11,7 +11,7 @@ struct CalendarView<Content: View>: View {
     let heightPerHour = 60
     let lineHeight = 2 // Height of calendar lines
     var isInteractive: Bool
-    var tasks: [Task]
+    var schedule: Schedule
     
     @ObservedObject var taskManager: TaskManager
     
@@ -65,7 +65,7 @@ struct CalendarView<Content: View>: View {
                     hasInitialized = true
                 }
             }
-            .onChange(of: tasks) {
+            .onChange(of: schedule.Tasks) {
                 recalculatePositions()
             }
             .onAppear {
@@ -77,7 +77,7 @@ struct CalendarView<Content: View>: View {
     } // view ends
     
     func recalculatePositions() {
-        let (calculatedPositions, calculatedTasks) = calculateDynamicPositions(tasks: tasks)
+        let (calculatedPositions, calculatedTasks) = PositionCalculator.calculateDynamicPositions(tasks: schedule.Tasks, startTime: schedule.startTime)
         positions = calculatedPositions
         updatedTasks = calculatedTasks
     }
@@ -166,81 +166,6 @@ struct CalendarView<Content: View>: View {
         }
     }
     
-    func calculatePosition(for date: Date) -> CGFloat {
-        let components = Calendar.current.dateComponents([.hour, .minute], from: date)
-        let hour = components.hour ?? 0
-        let minute = components.minute ?? 0
-
-        let totalMinutes = (hour * 60) + minute
-        
-        return CGFloat(totalMinutes)
-    }
-    
-    func calculateDate(for position: CGFloat) -> Date {
-        let totalMinutes = Int(position) + 690
-        let newDate = Calendar.current.date(byAdding: .minute, value: totalMinutes, to: Calendar.current.startOfDay(for: Date())) ?? Calendar.current.startOfDay(for: Date())
-        return newDate
-    }
-    
-    func calculateDynamicPositions(tasks: [Task]) -> (positions: [UUID: CGFloat], updatedTasks: [Task]) {
-        var positions: [UUID: CGFloat] = [:]
-        var occupiedSlots: [(start: CGFloat, end: CGFloat)] = []
-        var localTasks = tasks // Local mutable copy
-
-        // Sort tasks: exactStart first, then by priority
-        let sortedTasks = localTasks.sorted { task1, task2 in
-            if task1.exactStart != task2.exactStart {
-                return task1.exactStart // Exact-start tasks come first
-            }
-            if task1.exactStart && task2.exactStart {
-                return task1.startTime < task2.startTime // Sort exact-start by startTime
-            }
-            return task1.priority > task2.priority // Non-exact-start sorted by priority
-        }
-
-//        print(sortedTasks.map { $0.title }) // TODO: Debug: Check task order
-        
-        // Assign Y-positions
-        for task in sortedTasks {
-            if task.exactStart {
-                let exactPosition = calculatePosition(for: task.startTime) - 690
-                positions[task.id] = exactPosition
-
-                let endPosition = exactPosition + CGFloat(task.taskDuration)
-                occupiedSlots.append((start: exactPosition, end: endPosition))
-            } else {
-                var currentYOffset: CGFloat = calculatePosition(for: taskManager.schedule.startTime) - 690 // Tracks the next available Y position
-                let taskDuration = CGFloat(task.taskDuration)
-                
-                while true {
-                    // Check if currentYOffset overlaps with any occupied slot
-                    let overlaps = occupiedSlots.contains { slot in
-                        (currentYOffset < slot.end && currentYOffset + taskDuration > slot.start)
-                    }
-                    
-                    if !overlaps {
-                        // Found a spot where the task can fit
-                        positions[task.id] = currentYOffset
-                        
-                        // Update task start time
-                        let newStartTime = calculateDate(for: currentYOffset)
-                        if let taskIndex = localTasks.firstIndex(of: task) {
-                            localTasks[taskIndex].startTime = newStartTime
-                        }
-                        
-                        occupiedSlots.append((start: currentYOffset, end: currentYOffset + taskDuration))
-                        break
-                    }
-                    
-                    // Move to the next available position
-                    currentYOffset += 5 // Increment by 5-minute blocks
-                }
-            }
-        }
-
-        return (positions, localTasks)
-    }
-    
     func formattedTimeRange(for task: Task) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "h:mm a"
@@ -250,8 +175,8 @@ struct CalendarView<Content: View>: View {
     }
 }
 
-#Preview {
-    CalendarView(isInteractive: false, tasks: [], taskManager: TaskManager()) {
-        EmptyView()
-    }
-}
+//#Preview {
+//    CalendarView(isInteractive: false, schedule: Schedule(), taskManager: TaskManager()) {
+//        EmptyView()
+//    }
+//}

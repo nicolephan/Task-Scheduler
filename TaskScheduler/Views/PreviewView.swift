@@ -10,7 +10,7 @@ struct PreviewView: View {
     @Environment(\.dismiss) var dismiss
     
     @ObservedObject var taskManager: TaskManager
-    var tempSchedule: Schedule
+    var localSchedule: Schedule // localSchedule received from NewSchedule
     @Binding var scheduleExists: Bool
     var onSave: (Schedule) -> Void
     
@@ -35,8 +35,8 @@ struct PreviewView: View {
                 
                 Button(action: {
                     scheduleExists = true
-                    taskManager.schedule = tempSchedule // Commit changes
-                    onSave(tempSchedule)
+                    taskManager.schedule = localSchedule // Commit changes
+                    onSave(localSchedule)
                 }){
                     Image(systemName: "checkmark.circle.fill")
                         .resizable()
@@ -50,7 +50,7 @@ struct PreviewView: View {
             
             Spacer()
             
-            CalendarView(isInteractive: false, tasks: tempSchedule.Tasks, taskManager: taskManager) {
+            CalendarView(isInteractive: false, schedule: localSchedule, taskManager: taskManager) {
                 EmptyView()
             }
         }

@@ -61,6 +61,9 @@ struct NewScheduleView: View {
                     Spacer()
                     Button(action: {
                         if validateTimeRange() && validateForm() {
+                            let (_, updatedTasks) = PositionCalculator.calculateDynamicPositions(tasks: localSchedule.Tasks, startTime: localSchedule.startTime)
+                            localSchedule.Tasks = updatedTasks
+
                             path.append(localSchedule) // Send schedule to Preview to be finalized
                         }
                     }){
