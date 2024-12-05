@@ -161,76 +161,110 @@ struct ViewScheduleView: View {
                                 .foregroundStyle(.text)
                                 .padding(.top)
                             
-                            VStack {
-                                
-                                ForEach(localSchedule.Tasks.indices, id:\.self){index in
-                                    HStack{
-                                        TextField("", text: $localSchedule.Tasks[index].title)
-                                            .padding(.horizontal, 10)
-                                            .padding(.vertical, 8)
-                                            .background(RoundedRectangle(cornerRadius: 10)
-                                                .fill(Color.white))
-                                            .frame(height: 44)
-                                            .foregroundStyle(.text)
-                                            .font(.custom("Manrope-Bold", size: 18))
-                                            .disabled(!isEditable)
-                                        if isEditable{
-                                            NavigationLink(
-                                                destination: NewTaskView(
-                                                    task: $localSchedule.Tasks[index],
-                                                    deleteTask: {
-                                                        localSchedule.Tasks.remove(at: index)
-                                                    }
-                                                )
-                                            ) {
-                                                Image("pencil")
+                            if localSchedule.Tasks.isEmpty {
+                                VStack {
+                                    if isEditable {
+                                        HStack {
+                                            Button(action: {
+                                                let newTask = Task(title: "", exactStart: false, taskDuration: 0, priority: 0, addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "", startTime: Date())
+                                                localSchedule.Tasks.append(newTask)
+                                            }) {
+                                                Image("plus")
                                                     .resizable()
-                                                    .frame(width: 24, height: 24)
-                                                    .padding(.leading, 10)
+                                                    .scaledToFit()
+                                                    .frame(width: 30, height: 30)
                                                     .foregroundColor(.white)
+                                                    .frame(maxWidth: .infinity, minHeight: 44)
+                                                    .background(Color(red: 68/255, green: 115/255, blue: 207/255))
+                                                    .cornerRadius(10)
+                                            }
+                                            .padding(.top, 5)
+                                            
+                                            Spacer()
+                                                .frame(width: 40)
+                                        }
+                                    } else {
+                                        Text("No tasks scheduled")
+                                            .font(.custom("Manrope-Bold", size: 18))
+                                            .foregroundStyle(.white)
+                                            .frame(maxWidth: .infinity, minHeight: 44)
+                                    }
+                                }
+                                .padding(30)
+                                .background(Color(red: 95/255, green: 149/255, blue: 231/255))
+                                .cornerRadius(20)
+                                .shadow(radius: 4, x: 0, y: 4)
+                            } else {
+                                VStack {
+                                    ForEach(localSchedule.Tasks.indices, id:\.self){index in
+                                        HStack{
+                                            TextField("", text: $localSchedule.Tasks[index].title)
+                                                .padding(.horizontal, 10)
+                                                .padding(.vertical, 8)
+                                                .background(RoundedRectangle(cornerRadius: 10)
+                                                    .fill(Color.white))
+                                                .frame(height: 44)
+                                                .foregroundStyle(.text)
+                                                .font(.custom("Manrope-Bold", size: 18))
+                                                .disabled(!isEditable)
+                                            if isEditable{
+                                                NavigationLink(
+                                                    destination: NewTaskView(
+                                                        task: $localSchedule.Tasks[index],
+                                                        deleteTask: {
+                                                            localSchedule.Tasks.remove(at: index)
+                                                        }
+                                                    )
+                                                ) {
+                                                    Image("pencil")
+                                                        .resizable()
+                                                        .frame(width: 24, height: 24)
+                                                        .padding(.leading, 10)
+                                                        .foregroundColor(.white)
+                                                }
                                             }
                                         }
+                                        .padding(.vertical, 3)
                                     }
-                                    .padding(.vertical, 3)
-                                }
-                                
-                                if isEditable {
-                                    Button(action: {
-                                        let newTask = Task(title: "", exactStart: false, taskDuration: 0, priority: 0, addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "", startTime: Date())
-                                        
-                                        localSchedule.Tasks.append(newTask)
-                                    }) {
-                                        Image("plus")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 30, height: 30)
-                                            .foregroundColor(.white)
-                                            .frame(maxWidth: .infinity, minHeight: 44)
-                                            .background(Color(red: 68/255, green: 115/255, blue: 207/255))
-                                            .cornerRadius(10)
-                                    }
-                                    .padding(.top, 15)
-                                }
-                            }
-                            .padding(30)
-                            .background(Color(red: 95/255, green: 149/255, blue: 231/255))
-                            .cornerRadius(20)
-                            .shadow(radius: 4, x: 0, y: 4)
-                            
-                            // INVISIBLE DATEPICKER FOR RESIZE
-                            DatePicker("", selection: $localSchedule.startTime, displayedComponents: .hourAndMinute)
-                                .background(
-                                    GeometryReader { geo in
-                                        Color.clear.onAppear{
-                                            datepickersize = geo.size
+                                    
+                                    if isEditable {
+                                        Button(action: {
+                                            let newTask = Task(title: "", exactStart: false, taskDuration: 0, priority: 0, addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "", startTime: Date())
+                                            
+                                            localSchedule.Tasks.append(newTask)
+                                        }) {
+                                            Image("plus")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 30, height: 30)
+                                                .foregroundColor(.white)
+                                                .frame(maxWidth: .infinity, minHeight: 44)
+                                                .background(Color(red: 68/255, green: 115/255, blue: 207/255))
+                                                .cornerRadius(10)
                                         }
+                                        .padding(.top, 15)
                                     }
-                                )
-                                .allowsHitTesting(false)
-                                .fixedSize()
-                                .opacity(0)
-                            
-                            Spacer()
+                                }
+                                .padding(30)
+                                .background(Color(red: 95/255, green: 149/255, blue: 231/255))
+                                .cornerRadius(20)
+                                .shadow(radius: 4, x: 0, y: 4)
+                                
+                                // INVISIBLE DATEPICKER FOR RESIZE
+                                DatePicker("", selection: $localSchedule.startTime, displayedComponents: .hourAndMinute)
+                                    .background(
+                                        GeometryReader { geo in
+                                            Color.clear.onAppear{
+                                                datepickersize = geo.size
+                                            }
+                                        }
+                                    )
+                                    .allowsHitTesting(false)
+                                    .fixedSize()
+                                    .opacity(0)
+                                
+                                Spacer()
+                            }
                         }
                         .padding()
                     }
