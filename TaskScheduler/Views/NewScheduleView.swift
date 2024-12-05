@@ -8,6 +8,7 @@ import SwiftUI
 struct NewScheduleView: View {
     
     @Environment(\.dismiss) var dismiss
+    @Environment(\.verticalSizeClass) var verticalSizeClass: UserInterfaceSizeClass?
     
     @Binding var path: NavigationPath
     
@@ -32,9 +33,6 @@ struct NewScheduleView: View {
             exactStart: false,
             taskDuration: 0,
             priority: 0,
-            addBreaks: false,
-            breaksEvery: 0,
-            breakDuration: 0,
             description: "",
             startTime: modifiedSchedule.startTime
         )
@@ -82,6 +80,7 @@ struct NewScheduleView: View {
                 Text("New Schedule")
                     .font(.custom("Manrope-ExtraBold", size: 32))
                     .foregroundStyle(.text)
+                    .padding(.top, -20)
                 
                 ZStack(alignment: .bottom) {
                     Image("sky-boy")
@@ -187,7 +186,7 @@ struct NewScheduleView: View {
                                 
                                 HStack{
                                     Button(action: {
-                                        let newTask = Task(title: "", exactStart: false, taskDuration: 0, priority: 0, addBreaks: false, breaksEvery: 0, breakDuration: 0, description: "", startTime: Date())
+                                        let newTask = Task(title: "", exactStart: false, taskDuration: 0, priority: 0, description: "", startTime: Date())
                                         
                                         localSchedule.Tasks.append(newTask)
                                     }) {
@@ -205,7 +204,6 @@ struct NewScheduleView: View {
                                     Spacer()
                                         .frame(width: 40)
                                 }
-                                
                             }
                             .padding(30)
                             .background(Color(red: 95/255, green: 149/255, blue: 231/255))
@@ -231,6 +229,7 @@ struct NewScheduleView: View {
                     }
                 }
             }
+            .padding(.top, (verticalSizeClass == .compact) ? 100 : 0)
         }
         .navigationBarBackButtonHidden(true)
     }
@@ -259,7 +258,7 @@ struct NewScheduleView: View {
                 showAlert = true
                 return false
             }
-            if task.taskDuration == 0 || (task.addBreaks && task.breaksEvery == 0) || (task.addBreaks && task.breakDuration == 0){
+            if task.taskDuration == 0 {
                 alertMessage = "Required information for task \"\(task.title)\" is not present"
                 showAlert = true
                 return false

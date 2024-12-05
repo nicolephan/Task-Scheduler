@@ -31,22 +31,6 @@ struct ViewTaskView: View {
         let min = task.taskDuration % 60
         return String(min)
     }
-    var breakHour: String{
-        let hours = task.breakDuration / 60
-        return String(hours)
-    }
-    var breakMin: String{
-        let min = task.breakDuration % 60
-        return String(min)
-    }
-    var BreaksEveryHour: String{
-        let hours = task.breaksEvery / 60
-        return String(hours)
-    }
-    var BreaksEveryMin: String{
-        let min = task.breaksEvery % 60
-        return String(min)
-    }
     
     @Environment(\.dismiss) var dismiss
     
@@ -78,11 +62,7 @@ struct ViewTaskView: View {
                     task: $editedTask,
                     isEditable: isEditable,
                     taskHours: .constant(taskHour),
-                    taskMins: .constant(taskMin),
-                    breakDurationHours: .constant(breakHour),
-                    breakDurationMins: .constant(breakMin),
-                    breakFrequencyHours: .constant(BreaksEveryHour),
-                    breakFrequencyMins: .constant(BreaksEveryMin)
+                    taskMins: .constant(taskMin)
                 )
                 Spacer()
                 
@@ -106,10 +86,6 @@ struct ViewTaskView: View {
             isEditable: isEditable,
             taskHours: .constant(taskHour),
             taskMins: .constant(taskMin),
-            breakDurationHours: .constant(breakHour),
-            breakDurationMins: .constant(breakMin),
-            breakFrequencyHours: .constant(BreaksEveryHour),
-            breakFrequencyMins: .constant(BreaksEveryMin),
             onValidationError: { message in
                 alertMessage = message
                 showAlert = true
@@ -126,9 +102,6 @@ struct ViewTaskView: View {
             exactStart: false,
             taskDuration: 95,
             priority: 2,
-            addBreaks: true,
-            breaksEvery: 20,
-            breakDuration: 10,
             description: "Work on the Beta App. Add a new schedule viewing page. Add errors and alerts. Update and add new features to ensure finished product by deadline. blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah",
             startTime: Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date())!
         )

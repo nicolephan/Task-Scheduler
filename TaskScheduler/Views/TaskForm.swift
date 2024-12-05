@@ -11,10 +11,6 @@ struct TaskForm: View {
     var isEditable: Bool
     @Binding var taskHours: String
     @Binding var taskMins: String
-    @Binding var breakDurationHours: String
-    @Binding var breakDurationMins: String
-    @Binding var breakFrequencyHours: String
-    @Binding var breakFrequencyMins: String
     
     var onValidationError:((String) -> Void)?
     
@@ -169,112 +165,6 @@ struct TaskForm: View {
                 .disabled(!isEditable)
             }
             
-            Text("Breaks")
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding([.top, .leading, .trailing])
-                .font(.custom("Manrope-ExtraBold", size: 18))
-                .foregroundStyle(.text)
-            
-            VStack(spacing: 20) {
-                HStack{
-                    Text("Breaks")
-                        .font(.custom("Manrope-Bold", size: 18))
-                        .foregroundStyle(.text)
-                        .padding(.leading, 5)
-                    Toggle("", isOn: $task.addBreaks)
-                        .disabled(!isEditable)
-                }
-                
-                if task.addBreaks{
-                    HStack {
-                        HStack {
-                            Text("Breaks Every")
-                                .font(.custom("Manrope-Bold", size: 18))
-                                .foregroundStyle(.text)
-                                
-                            Text("*")
-                                .font(.custom("Manrope-Bold", size: 18))
-                                .foregroundColor(.redAccent)
-                        }
-                        .frame(width: 130, alignment: .leading)
-                        .padding(.leading, 5)
-                        Spacer()
-                        TextField("xx", text: $breakFrequencyHours)
-                            .keyboardType(.numberPad)
-                            .frame(maxWidth: 60)
-                            .multilineTextAlignment(.trailing)
-                            .onChange(of: breakFrequencyHours) {
-                                breakFrequencyHours = breakFrequencyHours.filter { "0123456789".contains($0) }
-                            }
-                            .disabled(!isEditable)
-                            .font(.custom("Manrope-ExtraBold", size: 18))
-                            .foregroundStyle(.blueAccent)
-                        Text("h")
-                            .font(.custom("Manrope-ExtraBold", size: 18))
-                            .foregroundStyle(.blueAccent)
-                        
-                        TextField("xx", text: $breakFrequencyMins)
-                            .keyboardType(.numberPad)
-                            .frame(maxWidth: 60)
-                            .multilineTextAlignment(.trailing)
-                            .onChange(of: breakFrequencyMins) {
-                                breakFrequencyMins = breakFrequencyMins.filter { "0123456789".contains($0) }
-                            }
-                            .disabled(!isEditable)
-                            .font(.custom("Manrope-ExtraBold", size: 18))
-                            .foregroundStyle(.blueAccent)
-                        Text("m")
-                            .font(.custom("Manrope-ExtraBold", size: 18))
-                            .foregroundStyle(.blueAccent)
-                    }
-                    
-                    HStack() {
-                        HStack {
-                            Text("Duration")
-                                .font(.custom("Manrope-Bold", size: 18))
-                                .foregroundStyle(.text)
-                            Text("*")
-                                .font(.custom("Manrope-Bold", size: 18))
-                                .foregroundColor(.redAccent)
-                        }
-                        .padding(.leading, 5)
-                        
-                        Spacer()
-                        TextField("xx", text: $breakDurationHours)
-                            .keyboardType(.numberPad)
-                            .frame(maxWidth: 60)
-                            .multilineTextAlignment(.trailing)
-                            .onChange(of: breakDurationHours) {
-                                breakDurationHours = breakDurationHours.filter { "0123456789".contains($0) }
-                            }
-                            .disabled(!isEditable)
-                            .font(.custom("Manrope-ExtraBold", size: 18))
-                            .foregroundStyle(.blueAccent)
-                        Text("h")
-                            .font(.custom("Manrope-ExtraBold", size: 18))
-                            .foregroundStyle(.blueAccent)
-                        
-                        TextField("xx", text: $breakDurationMins)
-                            .keyboardType(.numberPad)
-                            .frame(maxWidth: 60)
-                            .multilineTextAlignment(.trailing)
-                            .onChange(of: breakDurationMins) {
-                                breakDurationMins = breakDurationMins.filter { "0123456789".contains($0) }
-                            }
-                            .disabled(!isEditable)
-                            .font(.custom("Manrope-ExtraBold", size: 18))
-                            .foregroundStyle(.blueAccent)
-                        Text("m")
-                            .font(.custom("Manrope-ExtraBold", size: 18))
-                            .foregroundStyle(.blueAccent)
-                    }
-                }
-            }
-            .padding()
-            .background(Color(red:240/255, green:244/255, blue:246/255))
-            .cornerRadius(20)
-            .padding([.trailing, .leading])
-            
             Text("Description")
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding([.top, .leading, .trailing])
@@ -312,28 +202,7 @@ struct TaskForm: View {
             onValidationError?("Task duration cannot be zero.")
             return false
         }
-        
-        let breakDuration = (Int(breakDurationHours) ?? 0) * 60 + (Int(breakDurationMins) ?? 0)
-        let breakFrequency = (Int(breakFrequencyHours) ?? 0) * 60 + (Int(breakFrequencyMins) ?? 0)
-        
-        if task.addBreaks {
-            if breakDuration == 0{
-                onValidationError?("Break duration cannot be zero.")
-                return false
-            }
-            if breakFrequency == 0{
-                onValidationError?("Break frequency cannot be zero.")
-                return false
-            }
-            if breakFrequency >= taskDuration {
-                onValidationError?("Break frequency cannot be greater than or equal to task duration.")
-                return false
-            }
-            if breakDuration >= taskDuration {
-                onValidationError?("Break duration cannot be greater than or equal to task duration.")
-                return false
-            }
-        }
+
         return true
     }
 }
@@ -345,29 +214,18 @@ struct TaskForm_Previews: PreviewProvider {
             exactStart: false,
             taskDuration: 95,
             priority: 2,
-            addBreaks: true,
-            breaksEvery: 20,
-            breakDuration: 10,
             description: "Work on the Beta App. Add a new schedule viewing page. Add errors and alerts. Update and add new features to ensure finished product by deadline. blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah",
             startTime: Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date())!
         )
         
         @State var taskHours: String = "1"
         @State var taskMins: String = "35"
-        @State var breakDurationHours: String = "0"
-        @State var breakDurationMins: String = "10"
-        @State var breakFrequencyHours: String = "0"
-        @State var breakFrequencyMins: String = "20"
         
         TaskForm(
             task: $exampleTask,
             isEditable: true,
             taskHours: $taskHours,
-            taskMins: $taskMins,
-            breakDurationHours: $breakDurationHours,
-            breakDurationMins: $breakDurationMins,
-            breakFrequencyHours: $breakFrequencyHours,
-            breakFrequencyMins: $breakFrequencyMins
+            taskMins: $taskMins
         )
     }
 }

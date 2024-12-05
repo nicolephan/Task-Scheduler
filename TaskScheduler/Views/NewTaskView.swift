@@ -22,12 +22,9 @@ struct NewTaskView: View {
     
     @State private var taskHours: String = ""
     @State private var taskMins: String = ""
-    @State private var breakDurationHours: String = ""
-    @State private var breakDurationMins: String = ""
-    @State private var breakFrequencyHours: String = ""
-    @State private var breakFrequencyMins: String = ""
     
     @Environment(\.dismiss) var dismiss
+    @Environment(\.verticalSizeClass) var verticalSizeClass: UserInterfaceSizeClass?
     
     var body: some View {
         VStack {
@@ -60,23 +57,16 @@ struct NewTaskView: View {
                         .foregroundStyle(.blueAccent)
                 }
             }   //BUTTONS END
-            .padding([.horizontal, .bottom], 20)
+            .padding(20)
             .onAppear {
                 let totalDuration = task.taskDuration
                 taskHours = String(totalDuration / 60)
                 taskMins = String(totalDuration % 60)
-                
-                if task.addBreaks {
-                    breakDurationHours = String(task.breakDuration / 60)
-                    breakDurationMins = String(task.breakDuration % 60)
-                    breakFrequencyHours = String(task.breaksEvery / 60)
-                    breakFrequencyMins = String(task.breaksEvery % 60)
-                }
             }
             Spacer().frame(maxHeight: 15)
             
             ScrollView{
-                TaskForm(task: $localTask, isEditable: true, taskHours: $taskHours, taskMins: $taskMins, breakDurationHours: $breakDurationHours, breakDurationMins: $breakDurationMins, breakFrequencyHours: $breakFrequencyHours, breakFrequencyMins: $breakFrequencyMins,
+                TaskForm(task: $localTask, isEditable: true, taskHours: $taskHours, taskMins: $taskMins,
                          onValidationError: {error in
                     alertMessage = error
                     showAlert = true
@@ -86,13 +76,6 @@ struct NewTaskView: View {
                     let totalDuration = task.taskDuration
                     taskHours = String(totalDuration / 60)
                     taskMins = String(totalDuration % 60)
-                    
-                    if task.addBreaks {
-                        breakDurationHours = String(task.breakDuration / 60)
-                        breakDurationMins = String(task.breakDuration % 60)
-                        breakFrequencyHours = String(task.breaksEvery / 60)
-                        breakFrequencyMins = String(task.breaksEvery % 60)
-                    }
                 }
                 .padding(.horizontal, 8)
                 
@@ -137,10 +120,6 @@ struct NewTaskView: View {
             isEditable: true,
             taskHours: $taskHours,
             taskMins: $taskMins,
-            breakDurationHours: $breakDurationHours,
-            breakDurationMins: $breakDurationMins,
-            breakFrequencyHours: $breakFrequencyHours,
-            breakFrequencyMins: $breakFrequencyMins,
             onValidationError: { error in
                 alertMessage = error
                 showAlert = true
@@ -155,14 +134,8 @@ struct NewTaskView: View {
         task.exactStart = localTask.exactStart
         task.startTime = localTask.startTime
         task.taskDuration = (Int(taskHours) ?? 0) * 60 + (Int(taskMins) ?? 0)
-        task.addBreaks = localTask.addBreaks
         task.priority = localTask.priority
         task.description = localTask.description
-        
-        if task.addBreaks{
-            task.breakDuration = (Int(breakDurationHours) ?? 0) * 60 + (Int(breakDurationMins) ?? 0)
-            task.breaksEvery = (Int(breakFrequencyHours) ?? 0) * 60 + (Int(breakFrequencyMins) ?? 0)
-        }
         
         dismiss()
     }
@@ -174,9 +147,6 @@ struct NewTaskView: View {
         exactStart: false,
         taskDuration: 0,
         priority: 0,
-        addBreaks: false,
-        breaksEvery: 0,
-        breakDuration: 0,
         description: "",
         startTime: Date()
     )))
